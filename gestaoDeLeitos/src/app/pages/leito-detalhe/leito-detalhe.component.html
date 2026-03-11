@@ -1,0 +1,70 @@
+<div class="leito-detalhe animate-fade-up">
+
+  <div class="detalhe__loading" *ngIf="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- Breadcrumb -->
+    <a routerLink="/dashboard" class="back-link">← Voltar ao Dashboard</a>
+
+    <!-- Header do Leito -->
+    <div class="detalhe__header card card--elevated">
+      <div class="detalhe__bed-info">
+        <h1>Leito {{ bed?.alias?.[0] ?? id }}</h1>
+        <span class="status-badge status-badge--{{ bed?.status }}">
+          {{ bed?.status ?? '—' }}
+        </span>
+      </div>
+      <div class="detalhe__patient-info" *ngIf="patient">
+        <span class="risk-badge risk-badge--{{ patient.riskColor }}"></span>
+        <div>
+          <div class="detalhe__patient-name">{{ getPatientName() }}</div>
+          <div class="detalhe__encounter-status" *ngIf="encounter">
+            {{ statusLabel[encounter.status] }}
+          </div>
+        </div>
+      </div>
+      <div class="detalhe__patient-info detalhe__patient-info--empty" *ngIf="!patient">
+        <span>Leito sem paciente</span>
+      </div>
+    </div>
+
+    <!-- EDD -->
+    <div class="detalhe__edd card" *ngIf="encounter?.period?.estimatedEnd">
+      <div class="edd__label">📋 Previsão de Alta</div>
+      <div class="edd__date">{{ encounter!.period.estimatedEnd | date:'dd/MM/yyyy HH:mm' }}</div>
+      <a routerLink="/alta" class="btn btn--ghost btn--sm">Gerenciar Alta →</a>
+    </div>
+
+    <!-- Timeline -->
+    <div class="detalhe__timeline card">
+      <h3 class="detalhe__section-title">📅 Cronograma de Cuidados</h3>
+
+      <div class="timeline" *ngIf="encounter; else noTimeline">
+        <div
+          *ngFor="let event of timelineEvents"
+          class="timeline-item timeline-item--{{ event.status }}"
+        >
+          <div class="timeline-item__time">{{ event.time }}</div>
+          <div class="timeline-item__marker">
+            <span class="timeline-item__icon">{{ getStatusIcon(event.type) }}</span>
+          </div>
+          <div class="timeline-item__content">
+            <div class="timeline-item__title">{{ event.title }}</div>
+            <div class="timeline-item__performer" *ngIf="event.performer">{{ event.performer }}</div>
+            <span class="timeline-item__status-tag timeline-item__status-tag--{{ event.status }}">
+              {{ event.status === 'completed' ? 'Realizado' : event.status === 'in-progress' ? 'Em andamento' : 'Aguardando' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTimeline>
+        <p class="text-muted">Nenhum evento registrado para este leito.</p>
+      </ng-template>
+    </div>
+
+  </ng-container>
+</div>

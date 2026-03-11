@@ -1,0 +1,49 @@
+<div class="acompanhante">
+
+  <!-- Loading -->
+  <div class="acompanhante__loading" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Carregando informações...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- Header LGPD-safe -->
+    <div class="acompanhante__header">
+      <div class="acompanhante__logo">⚕️</div>
+      <h1>Portal do Acompanhante</h1>
+      <p>Status do seu familiar em tempo real</p>
+    </div>
+
+    <!-- Card de Status Principal -->
+    <div class="status-card" [style.--status-color]="patientStatus?.color ?? '#2d8bda'">
+      <div class="status-card__icon">{{ patientStatus?.icon ?? '🏥' }}</div>
+      <h2 class="status-card__label">{{ patientStatus?.label ?? 'Aguardando informações' }}</h2>
+      <p class="status-card__desc">{{ patientStatus?.description }}</p>
+    </div>
+
+    <!-- Info -->
+    <div class="acompanhante__info">
+      <div class="acompanhante__patient card">
+        <div class="acompanhante__patient-label">Paciente</div>
+        <div class="acompanhante__patient-name">{{ patientDisplayName }}</div>
+      </div>
+      <div class="acompanhante__update card">
+        <div class="acompanhante__update-label">Última atualização</div>
+        <div class="acompanhante__update-time">{{ formatTime(lastUpdate) }}</div>
+      </div>
+    </div>
+
+    <!-- Nota LGPD -->
+    <div class="acompanhante__lgpd">
+      🔒 Por respeito à privacidade do paciente, dados clínicos detalhados não são exibidos aqui. Em caso de urgência, procure a equipe de enfermagem.
+    </div>
+
+    <!-- Botão de Atualização -->
+    <button class="btn btn--primary btn--xl acompanhante__refresh" (click)="refresh()">
+      🔄 Atualizar Status
+    </button>
+
+  </ng-container>
+
+</div>

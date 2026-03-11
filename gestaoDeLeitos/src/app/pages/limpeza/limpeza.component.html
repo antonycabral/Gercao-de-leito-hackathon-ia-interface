@@ -1,0 +1,81 @@
+<div class="limpeza">
+
+  <!-- Header claro e grande (RNF.02 - operável com luvas) -->
+  <div class="limpeza__header">
+    <h1>🧹 App de Limpeza</h1>
+    <p>Aceite chamados e registre o checklist de higienização. Todos os itens são obrigatórios.</p>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <div class="limpeza__empty" *ngIf="!loading && tasks.length === 0">
+    <span>✅</span>
+    <h3>Nenhuma limpeza pendente!</h3>
+    <p>Todos os leitos estão limpos agora.</p>
+  </div>
+
+  <div class="limpeza__tasks" *ngIf="!loading">
+    <div
+      *ngFor="let task of tasks"
+      class="task-card card"
+      [class.task-card--active]="task.status === 'in-progress'"
+      [class.task-card--emergency]="isEmergency(task)"
+    >
+      <div class="task-card__header">
+        <div class="task-card__bed">
+          <span class="task-card__bed-icon">🛏️</span>
+          <span class="task-card__bed-code">Leito {{ getBedCode(task) }}</span>
+        </div>
+        <span class="task-card__timer" *ngIf="task.authoredOn">
+          ⏱️ Requisitado às {{ task.authoredOn | date:'HH:mm' }}
+        </span>
+      </div>
+      
+      <div class="task-card__emergency-badge" *ngIf="isEmergency(task)">
+        🚨 Limpeza de Emergência
+      </div>
+
+      <!-- Botão de Aceite (grande - RNF.02) -->
+      <button
+        *ngIf="task.status === 'requested'"
+        class="btn btn--primary btn--xl task-card__accept"
+        (click)="acceptTask(task)"
+      >
+        ✅ Aceitar Chamado — Iniciar SLA
+      </button>
+
+      <!-- Checklist (visível após aceite) -->
+      <div class="checklist" *ngIf="task.status === 'in-progress'">
+        <div
+          *ngFor="let item of task.checklist"
+          class="checklist-item"
+          [class.checklist-item--checked]="item.checked"
+          (click)="toggleCheck(item)"
+        >
+          <div class="checklist-item__checkbox">
+            <span *ngIf="item.checked">✓</span>
+          </div>
+          <span class="checklist-item__label">{{ item.label }}</span>
+        </div>
+      </div>
+
+      <!-- Botão Finalizar (grande - RNF.02) -->
+      <button
+        *ngIf="task.status === 'in-progress'"
+        class="btn btn--accent btn--xl task-card__finish"
+        [disabled]="!canFinish(task)"
+        (click)="finishTask(task)"
+      >
+        🏁 Finalizar e Liberar Leito
+      </button>
+
+      <div class="task-card__warning" *ngIf="task.status === 'in-progress' && !canFinish(task)">
+        ⚠️ Complete todos os itens do checklist para finalizar (RN.02)
+      </div>
+
+    </div>
+  </div>
+
+</div>

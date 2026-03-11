@@ -1,0 +1,100 @@
+<div class="triagem animate-fade-up">
+  <div class="triagem__header">
+    <h1>🚨 Triagem — Protocolo Manchester</h1>
+    <p>Classifique o paciente e o sistema sugerirá o leito mais adequado automaticamente.</p>
+  </div>
+
+  <div class="triagem__success" *ngIf="submitted">
+    <span class="triagem__success-icon">✅</span>
+    <h3>Triagem registrada com sucesso!</h3>
+    <p>Redirecionando para o dashboard...</p>
+  </div>
+
+  <form class="triagem__form card" *ngIf="!submitted" (ngSubmit)="onSubmit()" #f="ngForm">
+
+    <!-- Identificação -->
+    <section class="form-section">
+      <h3 class="form-section__title">👤 Identificação</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="patientName">Nome do Paciente *</label>
+          <input
+            id="patientName" type="text" class="input"
+            [(ngModel)]="form.patientName" name="patientName"
+            placeholder="Nome completo" required
+          />
+        </div>
+        <div class="form-group">
+          <label for="chiefComplaint">Queixa Principal *</label>
+          <input
+            id="chiefComplaint" type="text" class="input"
+            [(ngModel)]="form.chiefComplaint" name="chiefComplaint"
+            placeholder="Ex: Dor no peito, febre alta" required
+          />
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- Sinais Vitais -->
+    <section class="form-section">
+      <h3 class="form-section__title">💊 Sinais Vitais</h3>
+      <div class="form-row form-row--4col">
+        <div class="form-group">
+          <label for="hr">FC (bpm)</label>
+          <input id="hr" type="number" class="input" [(ngModel)]="form.heartRate" name="heartRate" placeholder="80" />
+        </div>
+        <div class="form-group">
+          <label for="bpSys">PA Sistólica</label>
+          <input id="bpSys" type="number" class="input" [(ngModel)]="form.bloodPressureSys" name="bpSys" placeholder="120" />
+        </div>
+        <div class="form-group">
+          <label for="temp">Temperatura (°C)</label>
+          <input id="temp" type="number" class="input" [(ngModel)]="form.temperature" name="temp" placeholder="36.5" step="0.1" />
+        </div>
+        <div class="form-group">
+          <label for="sat">SpO₂ (%)</label>
+          <input id="sat" type="number" class="input" [(ngModel)]="form.oxygenSat" name="sat" placeholder="98" />
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- Classificação de Risco -->
+    <section class="form-section">
+      <h3 class="form-section__title">🎯 Classificação de Risco *</h3>
+      <div class="risk-grid">
+        <button
+          *ngFor="let risk of riskColors"
+          type="button"
+          class="risk-btn"
+          [class.risk-btn--selected]="form.riskColor === risk.value"
+          [style.--risk-color]="risk.hex"
+          (click)="selectRisk(risk.value)"
+        >
+          <span class="risk-btn__dot"></span>
+          <span class="risk-btn__label">{{ risk.label }}</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Sugestão de Leito -->
+    <div class="leito-sugestao" *ngIf="availableBed">
+      <span class="leito-sugestao__icon">🏥</span>
+      <div>
+        <strong>Leito sugerido:</strong>
+        <span class="leito-sugestao__code">{{ availableBed }}</span>
+      </div>
+      <span class="status-badge status-badge--DISPONIVEL">Disponível</span>
+    </div>
+
+    <div class="triagem__actions">
+      <button type="submit" class="btn btn--accent btn--xl" [disabled]="!isValid()">
+        ✅ Registrar Triagem e Alocar Leito
+      </button>
+    </div>
+
+  </form>
+</div>
