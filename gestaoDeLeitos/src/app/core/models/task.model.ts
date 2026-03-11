@@ -1,61 +1,211 @@
-// FHIR: Task — eventos de cuidado gerados por um Encounter
-// Cobre: Limpeza, Medicação, Exame, Visita Médica, Triagem
+/**
+ * Models baseados em FHIR Resource: Task
+ * Representa tarefas relacionadas ao cuidado do paciente
+ */
 
-export type TaskType =
-  | 'LIMPEZA'
-  | 'LIMPEZA_EMERGENCIA'
-  | 'MEDICACAO'
-  | 'EXAME'
-  | 'VISITA_MEDICA'
-  | 'TRIAGEM';
-
-export type TaskPriority = 'ROUTINE' | 'URGENT' | 'ASAP' | 'STAT';
-
-export type TaskStatus =
-  | 'requested'
-  | 'received'
-  | 'accepted'
-  | 'in-progress'
-  | 'completed'
-  | 'cancelled';
-
-export const TASK_TYPE_LABEL: Record<TaskType, string> = {
-  LIMPEZA: 'Higienização',
-  LIMPEZA_EMERGENCIA: 'Limpeza de Emergência',
-  MEDICACAO: 'Medicação',
-  EXAME: 'Exame',
-  VISITA_MEDICA: 'Visita Médica',
-  TRIAGEM: 'Triagem'
-};
-
-export const TASK_TYPE_ICON: Record<TaskType, string> = {
-  LIMPEZA: 'cleaning_services',
-  LIMPEZA_EMERGENCIA: 'warning',
-  MEDICACAO: 'medication',
-  EXAME: 'biotech',
-  VISITA_MEDICA: 'stethoscope',
-  TRIAGEM: 'assignment'
-};
-
-export interface ChecklistItem {
-  id: string;
-  label: string;
-  checked: boolean;
+/**
+ * Status da tarefa
+ */
+export enum TaskStatus {
+  DRAFT = 'DRAFT',
+  REQUESTED = 'REQUESTED',
+  RECEIVED = 'RECEIVED',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  READY = 'READY',
+  IN_PROGRESS = 'IN_PROGRESS',
+  ON_HOLD = 'ON_HOLD',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  FAILED = 'FAILED',
+  ENTERED_IN_ERROR = 'ENTERED_IN_ERROR'
 }
 
-export interface FhirTask {
+/**
+ * Prioridade da tarefa
+ */
+export enum TaskPriority {
+  ROUTINE = 'ROUTINE',
+  URGENT = 'URGENT',
+  ASAP = 'ASAP',
+  STAT = 'STAT' // Imediato/Emergência
+}
+
+/**
+ * Tipo de tarefa
+ */
+export enum TaskType {
+  MEDICACAO = 'MEDICACAO',
+  EXAME = 'EXAME',
+  PROCEDIMENTO = 'PROCEDIMENTO',
+  CONSULTA = 'CONSULTA',
+  HIGIENIZACAO = 'HIGIENIZACAO',
+  TRANSFERENCIA = 'TRANSFERENCIA',
+  ALTA = 'ALTA',
+  VISITA = 'VISITA',
+  OBSERVACAO = 'OBSERVACAO',
+  OUTRO = 'OUTRO'
+}
+
+/**
+ * Interface para referência
+ */
+export interface Reference {
   id: string;
-  resourceType: 'Task';
-  type: TaskType;
-  priority: TaskPriority;
+  display: string;
+  type?: string;
+}
+
+/**
+ * Interface para input da tarefa
+ */
+export interface TaskInput {
+  type: {
+    text: string;
+  };
+  value?: any;
+}
+
+/**
+ * Interface para output da tarefa
+ */
+export interface TaskOutput {
+  type: {
+    text: string;
+  };
+  value?: any;
+}
+
+/**
+ * Interface principal Task (FHIR-based)
+ */
+export interface Task {
+  id: string;
+  identifier?: {
+    system: string;
+    value: string;
+  }[];
   status: TaskStatus;
-  for: { reference: string };           // Encounter/id
-  location?: { reference: string };     // Location/id (leito)
-  authoredOn: string;                   // ISO 8601
-  lastModified?: string;
-  owner?: { display: string };          // Responsável (ex: agente de limpeza)
-  note?: Array<{ text: string }>;
-  // extensão: checklist de limpeza (RN.02)
-  checklist?: ChecklistItem[];
-  slaDeadline?: string;                 // ISO 8601 — SLA de higienização
+  statusReason?: string;
+  intent: 'PROPOSAL' | 'PLAN' | 'ORDER' | 'ORIGINAL_ORDER' | 'REFLEX_ORDER' | 'FILLER_ORDER' | 'INSTANCE_ORDER' | 'OPTION';
+  priority?: TaskPriority;
+
+  // Tipo e código
+  code: TaskType;
+  description?: string;
+
+  // Paciente/Encounter
+  for?: Reference; // Paciente
+  encounter?: Reference;
+
+  // Datas
+  authoredOn: Date;
+  lastModified: Date;
+  executionPeriod?: {
+    start?: Date;
+    end?: Date;
+  };
+  scheduledTime?: Date; // Horário específico agendado
+
+  // Responsáveis
+  requester?: Reference; // Quem solicitou
+  owner?: Reference;     // Quem está executando
+  location?: Reference;
+
+  // Detalhes
+  reasonCode?: {
+    code: string;
+    text: string;
+  };
+  reasonReference?: Reference;
+  note?: string[];
+
+  // Inputs e Outputs
+  input?: TaskInput[];
+  output?: TaskOutput[];
+
+  // Relacionamentos
+  partOf?: string[]; // Tarefas pai
+  basedOn?: string[]; // Baseado em (ex: ServiceRequest)
+
+  // Metadados
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Interface específica para Medicação
+ */
+export interface MedicationTask extends Task {
+  code: TaskType.MEDICACAO;
+  medication: {
+    name: string;
+    dose: string;
+    route: 'ORAL' | 'IV' | 'IM' | 'SC' | 'TOPICO' | 'INALACAO' | 'OUTRA';
+    frequency: string;
+    duration?: string;
+  };
+  administrationTime: Date;
+  administered?: boolean;
+  administeredBy?: string;
+  administeredAt?: Date;
+  adverseReaction?: string;
+}
+
+/**
+ * Interface específica para Exame
+ */
+export interface ExamTask extends Task {
+  code: TaskType.EXAME;
+  examType: string;
+  examCode?: string;
+  specialty?: string;
+  requiresPreparation?: boolean;
+  preparationInstructions?: string[];
+  requiresTransport?: boolean;
+  transportStatus?: 'PENDING' | 'IN_TRANSIT' | 'ARRIVED' | 'RETURNED';
+  examLocation?: string;
+  result?: {
+    status: 'PRELIMINARY' | 'FINAL' | 'AMENDED' | 'CORRECTED';
+    reportUrl?: string;
+    summary?: string;
+  };
+}
+
+/**
+ * Interface específica para Higienização
+ */
+export interface CleaningTask extends Task {
+  code: TaskType.HIGIENIZACAO;
+  cleaningType: 'ROTINA' | 'ALTA_PACIENTE' | 'EMERGENCIA' | 'PREVENTIVA';
+  locationId: string;
+  locationDisplay: string;
+  checklist?: {
+    roupaDeCama: boolean;
+    limpezaPiso: boolean;
+    desinfeccaoSuperficies: boolean;
+    limpezaBanheiro: boolean;
+    reposicaoInsumos: boolean;
+    inspecaoEquipamentos: boolean;
+  };
+  slaDeadline?: Date;
+  acceptedAt?: Date;
+  startedAt?: Date;
+  completedAt?: Date;
+}
+
+/**
+ * Interface para timeline de tarefas do paciente
+ */
+export interface PatientTimeline {
+  patientId: string;
+  encounterId: string;
+  date: Date;
+  tasks: Task[];
+  events: {
+    time: Date;
+    type: 'TASK' | 'VITAL_SIGNS' | 'VISIT' | 'NOTE' | 'STATUS_CHANGE';
+    description: string;
+    performedBy?: string;
+  }[];
 }

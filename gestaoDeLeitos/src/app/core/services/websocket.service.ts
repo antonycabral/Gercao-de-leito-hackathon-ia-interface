@@ -1,66 +1,153 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { AuthService } from './auth.service';
 
-export interface WsMessage {
-  type: 'BED_STATUS_UPDATE' | 'PATIENT_STATUS_UPDATE' | 'CLEANING_REQUEST' | 'EDD_UPDATE' | 'NOTIFICATION';
-  payload: unknown;
-  timestamp: string;
+/**
+ * Tipos de eventos WebSocket
+ */
+export enum WebSocketEventType {
+  LOCATION_STATUS_CHANGED = 'LOCATION_STATUS_CHANGED',
+  ENCOUNTER_UPDATED = 'ENCOUNTER_UPDATED',
+  TASK_CREATED = 'TASK_CREATED',
+  TASK_UPDATED = 'TASK_UPDATED',
+  PATIENT_STATUS_CHANGED = 'PATIENT_STATUS_CHANGED',
+  CLEANING_TASK_ASSIGNED = 'CLEANING_TASK_ASSIGNED',
+  NOTIFICATION = 'NOTIFICATION',
+  EDD_CHANGED = 'EDD_CHANGED'
 }
 
-@Injectable({ providedIn: 'root' })
-export class WebsocketService implements OnDestroy {
-  private ws: WebSocket | null = null;
-  private messageSubject = new Subject<WsMessage>();
-  private reconnectInterval = 5000;
-  private wsUrl = 'ws://localhost:8080/ws'; // TODO: mover para environment
+/**
+ * Interface para mensagem WebSocket
+ */
+export interface WebSocketMessage {
+  type: WebSocketEventType;
+  payload: any;
+  timestamp: Date;
+}
 
-  public messages$: Observable<WsMessage> = this.messageSubject.asObservable();
+/**
+ * Serviço de WebSocket para atualizações em tempo real
+ * Implementa comunicação bidirecional com o servidor
+ */
+@Injectable({
+  providedIn: 'root'
+})
+export class WebSocketService {
+  private readonly authService = inject(AuthService);
 
+  private socket?: WebSocket;
+  private messageSubject = new Subject<WebSocketMessage>();
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectInterval = 5000; // 5 segundos
+  private isIntentionallyClosed = false;
+
+  /**
+   * Observable para receber mensagens
+   */
+  public messages$ = this.messageSubject.asObservable();
+
+  /**
+   * Conecta ao servidor WebSocket
+   */
   connect(): void {
-    if (this.ws?.readyState === WebSocket.OPEN) return;
+    if (this.socket?.readyState === WebSocket.OPEN) {
+      console.log('WebSocket já está conectado');
+      return;
+    }
+
+    const token = this.authService.getToken();
+    if (!token) {
+      console.error('Token não encontrado. Não é possível conectar ao WebSocket');
+      return;
+    }
+
+    const wsUrl = `${environment.wsUrl}?token=${token}`;
+    this.isIntentionallyClosed = false;
 
     try {
-      this.ws = new WebSocket(this.wsUrl);
+      this.socket = new WebSocket(wsUrl);
 
-      this.ws.onmessage = (event) => {
+      this.socket.onopen = () => {
+        console.log('WebSocket conectado');
+        this.reconnectAttempts = 0;
+      };
+
+      this.socket.onmessage = (event) => {
         try {
-          const msg: WsMessage = JSON.parse(event.data);
-          this.messageSubject.next(msg);
-        } catch {
-          console.warn('[WebSocket] Mensagem inválida recebida:', event.data);
+          const message: WebSocketMessage = JSON.parse(event.data);
+          this.messageSubject.next(message);
+        } catch (error) {
+          console.error('Erro ao processar mensagem WebSocket:', error);
         }
       };
 
-      this.ws.onerror = (err) => {
-        console.error('[WebSocket] Erro de conexão:', err);
+      this.socket.onerror = (error) => {
+        console.error('Erro no WebSocket:', error);
       };
 
-      this.ws.onclose = () => {
-        console.warn('[WebSocket] Conexão encerrada. Reconectando em', this.reconnectInterval, 'ms...');
-        setTimeout(() => this.connect(), this.reconnectInterval);
+      this.socket.onclose = (event) => {
+        console.log('WebSocket desconectado:', event.reason);
+
+        if (!this.isIntentionallyClosed && this.reconnectAttempts < this.maxReconnectAttempts) {
+          this.reconnectAttempts++;
+          console.log(`Tentando reconectar... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+          setTimeout(() => this.connect(), this.reconnectInterval);
+        }
       };
 
-      this.ws.onopen = () => {
-        console.info('[WebSocket] Conectado ao servidor.');
-      };
-    } catch (err) {
-      console.error('[WebSocket] Falha ao criar conexão:', err);
-      setTimeout(() => this.connect(), this.reconnectInterval);
+    } catch (error) {
+      console.error('Erro ao criar conexão WebSocket:', error);
     }
   }
 
-  send(msg: Omit<WsMessage, 'timestamp'>): void {
-    if (this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({ ...msg, timestamp: new Date().toISOString() }));
-    }
-  }
-
+  /**
+   * Desconecta do servidor WebSocket
+   */
   disconnect(): void {
-    this.ws?.close();
-    this.ws = null;
+    if (this.socket) {
+      this.isIntentionallyClosed = true;
+      this.socket.close();
+      this.socket = undefined;
+    }
   }
 
-  ngOnDestroy(): void {
-    this.disconnect();
+  /**
+   * Envia mensagem pelo WebSocket
+   */
+  send(type: WebSocketEventType, payload: any): void {
+    if (this.socket?.readyState === WebSocket.OPEN) {
+      const message: WebSocketMessage = {
+        type,
+        payload,
+        timestamp: new Date()
+      };
+      this.socket.send(JSON.stringify(message));
+    } else {
+      console.error('WebSocket não está conectado');
+    }
+  }
+
+  /**
+   * Inscreve-se em um tipo específico de evento
+   */
+  on(eventType: WebSocketEventType): Observable<any> {
+    return new Observable(observer => {
+      const subscription = this.messages$.subscribe(message => {
+        if (message.type === eventType) {
+          observer.next(message.payload);
+        }
+      });
+
+      return () => subscription.unsubscribe();
+    });
+  }
+
+  /**
+   * Verifica se está conectado
+   */
+  isConnected(): boolean {
+    return this.socket?.readyState === WebSocket.OPEN;
   }
 }

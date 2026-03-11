@@ -1,59 +1,133 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-export type NotificationLevel = 'info' | 'success' | 'warning' | 'danger';
-
-export interface AppNotification {
-  id: string;
-  level: NotificationLevel;
-  title: string;
-  message: string;
-  autoDismiss?: boolean;
-  dismissAfterMs?: number;
-  timestamp: string;
+/**
+ * Tipo de notificação
+ */
+export enum NotificationType {
+  SUCCESS = 'success',
+  ERROR = 'error',
+  WARNING = 'warning',
+  INFO = 'info'
 }
 
-@Injectable({ providedIn: 'root' })
-export class NotificationService {
-  private notificationSubject = new Subject<AppNotification>();
-  public notifications$: Observable<AppNotification> = this.notificationSubject.asObservable();
+/**
+ * Interface para notificação
+ */
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  title?: string;
+  message: string;
+  duration?: number;
+  dismissible?: boolean;
+  action?: {
+    label: string;
+    callback: () => void;
+  };
+}
 
-  private emit(level: NotificationLevel, title: string, message: string, autoDismiss = true): void {
-    const notification: AppNotification = {
-      id: crypto.randomUUID(),
-      level,
+/**
+ * Serviço para gerenciar notificações/toasts
+ */
+@Injectable({
+  providedIn: 'root'
+})
+export class NotificationService {
+  private notificationsSubject = new BehaviorSubject<Notification[]>([]);
+  public notifications$: Observable<Notification[]> = this.notificationsSubject.asObservable();
+
+  private defaultDuration = 5000; // 5 segundos
+
+  /**
+   * Mostra uma notificação de sucesso
+   */
+  success(message: string, title?: string, duration?: number): void {
+    this.show({
+      type: NotificationType.SUCCESS,
       title,
       message,
-      autoDismiss,
-      dismissAfterMs: autoDismiss ? 5000 : undefined,
-      timestamp: new Date().toISOString()
+      duration
+    });
+  }
+
+  /**
+   * Mostra uma notificação de erro
+   */
+  error(message: string, title?: string, duration?: number): void {
+    this.show({
+      type: NotificationType.ERROR,
+      title: title || 'Erro',
+      message,
+      duration: duration || 7000 // Erros ficam mais tempo na tela
+    });
+  }
+
+  /**
+   * Mostra uma notificação de aviso
+   */
+  warning(message: string, title?: string, duration?: number): void {
+    this.show({
+      type: NotificationType.WARNING,
+      title,
+      message,
+      duration
+    });
+  }
+
+  /**
+   * Mostra uma notificação informativa
+   */
+  info(message: string, title?: string, duration?: number): void {
+    this.show({
+      type: NotificationType.INFO,
+      title,
+      message,
+      duration
+    });
+  }
+
+  /**
+   * Mostra uma notificação customizada
+   */
+  show(notification: Omit<Notification, 'id'>): void {
+    const newNotification: Notification = {
+      id: this.generateId(),
+      dismissible: true,
+      duration: notification.duration || this.defaultDuration,
+      ...notification
     };
-    this.notificationSubject.next(notification);
+
+    const current = this.notificationsSubject.value;
+    this.notificationsSubject.next([...current, newNotification]);
+
+    // Auto-remove após duração definida
+    if (newNotification.duration && newNotification.duration > 0) {
+      setTimeout(() => {
+        this.dismiss(newNotification.id);
+      }, newNotification.duration);
+    }
   }
 
-  info(title: string, message: string): void {
-    this.emit('info', title, message);
+  /**
+   * Dispensa uma notificação específica
+   */
+  dismiss(id: string): void {
+    const current = this.notificationsSubject.value;
+    this.notificationsSubject.next(current.filter(n => n.id !== id));
   }
 
-  success(title: string, message: string): void {
-    this.emit('success', title, message);
+  /**
+   * Limpa todas as notificações
+   */
+  clear(): void {
+    this.notificationsSubject.next([]);
   }
 
-  warning(title: string, message: string): void {
-    this.emit('warning', title, message, false);
-  }
-
-  danger(title: string, message: string): void {
-    this.emit('danger', title, message, false);
-  }
-
-  /** Notificação de limpeza de emergência (RF.05) */
-  cleaningEmergency(bedCode: string): void {
-    this.emit('danger', '🚨 Limpeza de Emergência', `Leito ${bedCode} requer higienização imediata!`, false);
-  }
-
-  /** Notificação de previsão de alta (RF.02 / RF.03) */
-  dischargeAlert(patientName: string, eddDate: string): void {
-    this.emit('warning', '📋 Previsão de Alta', `${patientName} — Alta prevista para ${eddDate}`);
+  /**
+   * Gera um ID único
+   */
+  private generateId(): string {
+    return `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 }

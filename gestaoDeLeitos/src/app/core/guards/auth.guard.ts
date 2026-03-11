@@ -1,42 +1,25 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { map } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
 
-// Roles do sistema
-export type UserRole = 'ENFERMAGEM' | 'MEDICO' | 'LIMPEZA' | 'NIR' | 'ACOMPANHANTE';
-
-// Simula o serviço de autenticação (a ser integrado com backend real)
-function getStoredRole(): UserRole | null {
-  try {
-    return (localStorage.getItem('userRole') as UserRole) ?? null;
-  } catch {
-    return null;
-  }
-}
-
-/** Guard principal — verifica autenticação */
+/**
+ * Guard para proteger rotas que requerem autenticação
+ */
 export const authGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
   const router = inject(Router);
-  const role = getStoredRole();
 
-  if (!role) {
-    // TODO: redirecionar para login quando a tela for implementada
-    // router.navigate(['/login']);
-    return true; // Durante desenvolvimento, permite acesso livre
-  }
+  return authService.isAuthenticated$.pipe(
+    map(isAuthenticated => {
+      if (isAuthenticated) {
+        return true;
+      }
 
-  return true;
-};
-
-/** Guard de role — restringe acesso por perfil */
-export const roleGuard = (allowedRoles: UserRole[]): CanActivateFn => {
-  return () => {
-    const router = inject(Router);
-    const role = getStoredRole();
-
-    if (!role || !allowedRoles.includes(role)) {
-      router.navigate(['/']);
-      return false;
-    }
-    return true;
-  };
+      // Salva a URL tentada para redirecionar após login
+      return router.createUrlTree(['/login'], {
+        queryParams: { returnUrl: state.url }
+      });
+    })
+  );
 };

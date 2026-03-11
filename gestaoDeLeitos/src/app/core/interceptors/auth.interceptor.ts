@@ -1,23 +1,22 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn } from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
-/** Interceptor que adiciona Authorization header em todas as requisições à API */
-export const authInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn
-) => {
-  // Aplica apenas para chamadas à API interna
-  if (!req.url.startsWith('/api')) {
+/**
+ * Interceptor para adicionar token de autenticação nas requisições
+ */
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthService);
+  const token = authService.getToken();
+
+  // Se não há token ou é uma requisição de auth, não adiciona o header
+  if (!token || req.url.includes('/auth/')) {
     return next(req);
   }
 
-  const token = localStorage.getItem('authToken') ?? '';
-
+  // Clona a requisição e adiciona o header de autorização
   const authReq = req.clone({
-    setHeaders: {
-      Authorization: token ? `Bearer ${token}` : '',
-      'Content-Type': 'application/json',
-      'X-App-Version': '1.0.0'
-    }
+    headers: req.headers.set('Authorization', `Bearer ${token}`)
   });
 
   return next(authReq);

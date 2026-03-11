@@ -1,0 +1,61 @@
+<div class="dashboard-container">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">🏥</span>
+        <span class="logo-text">Gestão de Leitos</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a routerLink="/leitos" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">🛏️</span>
+        <span class="nav-text">Leitos</span>
+      </a>
+      <a routerLink="/pacientes" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span class="nav-text">Pacientes</span>
+      </a>
+      <a routerLink="/tarefas" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">✓</span>
+        <span class="nav-text">Tarefas</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">{{ getUserInitials() }}</div>
+        <div class="user-details">
+          <p class="user-name">{{ (currentUser$ | async)?.name }}</p>
+          <p class="user-role">{{ getRoleLabel((currentUser$ | async)?.role) }}</p>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        <span>🚪</span>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="header">
+      <h1 class="page-title">{{ pageTitle }}</h1>
+      <div class="header-actions">
+        <div class="connection-status" [class.connected]="isConnected$ | async">
+          <span class="status-dot"></span>
+          <span class="status-text">
+            {{ (isConnected$ | async) ? 'Conectado' : 'Desconectado' }}
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

@@ -1,57 +1,85 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
+import { UserRole } from './core/models/user.model';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: '/login',
     pathMatch: 'full'
   },
   {
-    path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
-    title: 'Dashboard de Leitos'
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
   },
   {
-    path: 'triagem',
+    path: '',
+    loadComponent: () => import('./pages/layout/layout.component').then(m => m.LayoutComponent),
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/triagem/triagem.component').then(m => m.TriagemComponent),
-    title: 'Triagem — Protocolo Manchester'
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
+        path: 'admin',
+        canActivate: [roleGuard([UserRole.ADMIN])],
+        children: [
+          {
+            path: 'dashboard',
+            loadComponent: () => import('./pages/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+          }
+        ]
+      },
+      {
+        path: 'medico',
+        canActivate: [roleGuard([UserRole.MEDICO])],
+        children: [
+          {
+            path: 'dashboard',
+            loadComponent: () => import('./pages/medico/medico-dashboard/medico-dashboard.component').then(m => m.MedicoDashboardComponent)
+          }
+        ]
+      },
+      {
+        path: 'enfermagem',
+        canActivate: [roleGuard([UserRole.ENFERMAGEM])],
+        children: [
+          {
+            path: 'dashboard',
+            loadComponent: () => import('./pages/enfermagem/enfermagem-dashboard/enfermagem-dashboard.component').then(m => m.EnfermagemDashboardComponent)
+          }
+        ]
+      },
+      {
+        path: 'triagem',
+        canActivate: [roleGuard([UserRole.TRIAGEM])],
+        children: [
+          {
+            path: 'dashboard',
+            loadComponent: () => import('./pages/triagem/triagem-dashboard/triagem-dashboard.component').then(m => m.TriagemDashboardComponent)
+          }
+        ]
+      },
+      {
+        path: 'limpeza',
+        canActivate: [roleGuard([UserRole.LIMPEZA])],
+        children: [
+          {
+            path: 'dashboard',
+            loadComponent: () => import('./pages/limpeza/limpeza-dashboard/limpeza-dashboard.component').then(m => m.LimpezaDashboardComponent)
+          }
+        ]
+      }
+    ]
   },
   {
-    path: 'leitos/:id',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/leito-detalhe/leito-detalhe.component').then(m => m.LeitoDetalheComponent),
-    title: 'Detalhe do Leito'
-  },
-  {
-    path: 'alta',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/alta/alta.component').then(m => m.AltaComponent),
-    title: 'Gestão de Alta'
-  },
-  {
-    path: 'limpeza',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/limpeza/limpeza.component').then(m => m.LimpezaComponent),
-    title: 'App de Limpeza'
-  },
-  {
-    path: 'acompanhante/:token',
-    loadComponent: () =>
-      import('./pages/acompanhante/acompanhante.component').then(m => m.AcompanhanteComponent),
-    title: 'Portal do Acompanhante'
+    path: 'unauthorized',
+    loadComponent: () => import('./pages/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
   },
   {
     path: '**',
-    loadComponent: () =>
-      import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent),
-    title: 'Página não encontrada'
+    redirectTo: '/login'
   }
 ];

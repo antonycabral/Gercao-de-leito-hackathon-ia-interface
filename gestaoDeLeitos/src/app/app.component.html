@@ -1,70 +1,8 @@
-<div class="app-layout">
+<!-- Loading Component -->
+<app-loading></app-loading>
 
-  <!-- ============= SIDEBAR ============= -->
-  <aside class="sidebar" [class.sidebar--collapsed]="sidebarCollapsed">
-    <div class="sidebar__brand">
-      <span class="sidebar__logo">⚕️</span>
-      <span class="sidebar__brand-name">GestãoLeitos</span>
-    </div>
+<!-- Notification Component -->
+<app-notification></app-notification>
 
-    <nav class="sidebar__nav">
-      <a
-        *ngFor="let link of navLinks"
-        [routerLink]="link.path"
-        routerLinkActive="sidebar__link--active"
-        [routerLinkActiveOptions]="{ exact: !!link['end'] }"
-        class="sidebar__link"
-      >
-        <span class="sidebar__link-icon">{{ link.icon }}</span>
-        <span class="sidebar__link-label">{{ link.label }}</span>
-      </a>
-    </nav>
-
-    <div class="sidebar__footer">
-      <a routerLink="/acompanhante/demo" class="sidebar__link sidebar__link--secondary">
-        <span class="sidebar__link-icon">👥</span>
-        <span class="sidebar__link-label">Portal Acompanhante</span>
-      </a>
-    </div>
-  </aside>
-
-  <!-- ============= MAIN ============= -->
-  <div class="app-main">
-
-    <!-- HEADER -->
-    <header class="app-header">
-      <div class="app-header__left">
-        <button class="btn btn--icon btn--ghost" (click)="toggleSidebar()" title="Recolher menu">
-          ☰
-        </button>
-        <span class="app-header__title">{{ title }}</span>
-      </div>
-      <div class="app-header__right">
-        <div class="app-header__status animate-glow">
-          <span class="status-dot status-dot--online"></span>
-          <span>Tempo Real</span>
-        </div>
-        <span class="app-header__user">👤 Enfermagem</span>
-      </div>
-    </header>
-
-    <!-- NOTIFICATION BANNERS -->
-    <div class="notification-stack" *ngIf="notifications.length > 0">
-      <div
-        *ngFor="let n of notifications"
-        class="notification-banner notification-banner--{{ n.level }} animate-fade-up"
-      >
-        <span class="notification-banner__message">
-          <strong>{{ n.title }}</strong> {{ n.message }}
-        </span>
-        <button class="notification-banner__close" (click)="dismissNotification(n.id)">✕</button>
-      </div>
-    </div>
-
-    <!-- PAGE CONTENT -->
-    <main class="page-content">
-      <router-outlet></router-outlet>
-    </main>
-
-  </div>
-</div>
+<!-- Main Router Outlet -->
+<router-outlet></router-outlet>

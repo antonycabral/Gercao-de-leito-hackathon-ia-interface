@@ -1,0 +1,110 @@
+@import '../../../styles/colors.scss';
+@import '../../../styles/variables.scss';
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  // Location Status Colors
+  &.status-disponivel {
+    background: rgba($status-disponivel, 0.1);
+    color: darken($status-disponivel, 10%);
+  }
+
+  &.status-ocupado {
+    background: rgba($status-ocupado, 0.1);
+    color: darken($status-ocupado, 10%);
+  }
+
+  &.status-ocupado_ausente {
+    background: rgba($info, 0.1);
+    color: darken($info, 10%);
+  }
+
+  &.status-em_medicacao {
+    background: rgba($secondary-yellow, 0.1);
+    color: darken($secondary-yellow, 20%);
+  }
+
+  &.status-higienizacao {
+    background: rgba($status-higienizacao, 0.1);
+    color: darken($status-higienizacao, 20%);
+  }
+
+  &.status-reservado {
+    background: rgba($status-reservado, 0.1);
+    color: darken($status-reservado, 10%);
+  }
+
+  &.status-manutencao {
+    background: rgba($status-manutencao, 0.1);
+    color: darken($status-manutencao, 10%);
+  }
+
+  &.status-inativo {
+    background: rgba($gray-400, 0.1);
+    color: $gray-600;
+  }
+
+  // Manchester Protocol Colors
+  &.status-emergencia {
+    background: rgba($manchester-emergencia, 0.1);
+    color: darken($manchester-emergencia, 10%);
+  }
+
+  &.status-muito_urgente {
+    background: rgba($manchester-muito-urgente, 0.1);
+    color: darken($manchester-muito-urgente, 20%);
+  }
+
+  &.status-urgente {
+    background: rgba($manchester-urgente, 0.1);
+    color: darken($manchester-urgente, 20%);
+  }
+
+  &.status-pouco_urgente {
+    background: rgba($manchester-pouco-urgente, 0.1);
+    color: darken($manchester-pouco-urgente, 10%);
+  }
+
+  &.status-nao_urgente {
+    background: rgba($manchester-nao-urgente, 0.1);
+    color: darken($manchester-nao-urgente, 10%);
+  }
+
+  // Task Status
+  &.status-requested,
+  &.status-pendente {
+    background: rgba($warning, 0.1);
+    color: darken($warning, 20%);
+  }
+
+  &.status-in_progress,
+  &.status-em_andamento {
+    background: rgba($info, 0.1);
+    color: darken($info, 10%);
+  }
+
+  &.status-completed,
+  &.status-concluida {
+    background: rgba($success, 0.1);
+    color: darken($success, 10%);
+  }
+
+  &.status-cancelled,
+  &.status-cancelada {
+    background: rgba($gray-400, 0.1);
+    color: $gray-600;
+  }
+
+  &.status-failed {
+    background: rgba($error, 0.1);
+    color: darken($error, 10%);
+  }
+}

@@ -1,0 +1,58 @@
+// Paleta Luminous - Baseada na imagem fornecida
+// Primary Colors (Laranja Vibrante)
+$primary-orange: #FF5800;
+$primary-orange-light: #FF7A33;
+$primary-orange-lighter: #FF9D66;
+$primary-orange-lightest: #FFBE99;
+$primary-orange-dark: #CC4600;
+$primary-orange-darker: #993300;
+
+// Secondary Colors (Amarelo)
+$secondary-yellow: #FFB800;
+$secondary-yellow-light: #FFC933;
+$secondary-yellow-lighter: #FFD966;
+$secondary-yellow-dark: #CC9300;
+
+// Neutral Colors
+$white: #FFFFFF;
+$gray-50: #F9FAFB;
+$gray-100: #F3F4F6;
+$gray-200: #E5E7EB;
+$gray-300: #D1D5DB;
+$gray-400: #9CA3AF;
+$gray-500: #6B7280;
+$gray-600: #4B5563;
+$gray-700: #374151;
+$gray-800: #1F2937;
+$gray-900: #111827;
+$black: #000000;
+
+// Status Colors (baseado no fluxo hospitalar)
+$status-disponivel: #10B981; // Verde
+$status-ocupado: #EF4444; // Vermelho
+$status-higienizacao: #F59E0B; // Amarelo/Laranja
+$status-reservado: #3B82F6; // Azul
+$status-manutencao: #8B5CF6; // Roxo
+
+// Manchester Protocol Colors
+$manchester-emergencia: #DC2626; // Vermelho - Emergência
+$manchester-muito-urgente: #FB923C; // Laranja - Muito Urgente
+$manchester-urgente: #FBBF24; // Amarelo - Urgente
+$manchester-pouco-urgente: #22C55E; // Verde - Pouco Urgente
+$manchester-nao-urgente: #3B82F6; // Azul - Não Urgente
+
+// Semantic Colors
+$success: #10B981;
+$warning: #F59E0B;
+$error: #EF4444;
+$info: #3B82F6;
+
+// Gradients
+$gradient-primary: linear-gradient(135deg, $secondary-yellow 0%, $primary-orange 100%);
+$gradient-dark: linear-gradient(135deg, $primary-orange-dark 0%, $primary-orange-darker 100%);
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);

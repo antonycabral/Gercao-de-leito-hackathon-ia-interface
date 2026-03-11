@@ -1,44 +1,47 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BedStatus } from '../../core/models/location.model';
-import { EncounterStatus } from '../../core/models/encounter.model';
-
-type BadgeStatus = BedStatus | EncounterStatus;
-
-const STATUS_LABELS: Record<string, string> = {
-  // Bed
-  DISPONIVEL: 'Disponível',
-  OCUPADO: 'Ocupado',
-  OCUPADO_AUSENTE: 'Paciente Ausente',
-  EM_MEDICACAO: 'Em Medicação',
-  EM_EXAME: 'Em Exame',
-  HIGIENIZACAO: 'Higienização',
-  MANUTENCAO: 'Manutenção',
-  // Encounter
-  TRIAGEM: 'Em Triagem',
-  INTERNADO: 'Internado',
-  AGUARDANDO_VISITA: 'Aguard. Visita',
-  PREVISAO_ALTA: 'Prev. Alta',
-  ALTA_CONFIRMADA: 'Alta Confirmada',
-};
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-status-badge',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <span class="status-badge status-badge--{{ status }}">
-      {{ label }}
-    </span>
-  `,
-  styles: [`
-    :host { display: inline-flex; }
-  `]
+  templateUrl: './status-badge.component.html',
+  styleUrls: ['./status-badge.component.scss']
 })
 export class StatusBadgeComponent {
-  @Input({ required: true }) status!: BadgeStatus;
+  @Input() status!: string;
 
-  get label(): string {
-    return STATUS_LABELS[this.status] ?? this.status;
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      // Location Status
+      'DISPONIVEL': 'Disponível',
+      'OCUPADO': 'Ocupado',
+      'OCUPADO_AUSENTE': 'Ausente',
+      'EM_MEDICACAO': 'Medicação',
+      'HIGIENIZACAO': 'Limpeza',
+      'RESERVADO': 'Reservado',
+      'MANUTENCAO': 'Manutenção',
+      'INATIVO': 'Inativo',
+
+      // Manchester Protocol
+      'EMERGENCIA': 'Emergência',
+      'MUITO_URGENTE': 'Muito Urgente',
+      'URGENTE': 'Urgente',
+      'POUCO_URGENTE': 'Pouco Urgente',
+      'NAO_URGENTE': 'Não Urgente',
+
+      // Task Status
+      'REQUESTED': 'Solicitado',
+      'PENDENTE': 'Pendente',
+      'IN_PROGRESS': 'Em Andamento',
+      'EM_ANDAMENTO': 'Em Andamento',
+      'COMPLETED': 'Concluído',
+      'CONCLUIDA': 'Concluída',
+      'CANCELLED': 'Cancelado',
+      'CANCELADA': 'Cancelada',
+      'FAILED': 'Falhou'
+    };
+
+    return labels[status] || status;
   }
 }

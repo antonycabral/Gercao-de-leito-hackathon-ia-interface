@@ -1,0 +1,128 @@
+@import '../../../styles/colors.scss';
+@import '../../../styles/variables.scss';
+
+.notifications-container {
+  position: fixed;
+  top: $spacing-lg;
+  right: $spacing-lg;
+  z-index: $z-tooltip;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  max-width: 400px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.notification {
+  pointer-events: all;
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  border-left: 4px solid;
+
+  &.success {
+    border-left-color: $success;
+
+    .notification-icon {
+      color: $success;
+    }
+  }
+
+  &.error {
+    border-left-color: $error;
+
+    .notification-icon {
+      color: $error;
+    }
+  }
+
+  &.warning {
+    border-left-color: $warning;
+
+    .notification-icon {
+      color: $warning;
+    }
+  }
+
+  &.info {
+    border-left-color: $info;
+
+    .notification-icon {
+      color: $info;
+    }
+  }
+}
+
+.notification-icon {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-title {
+  margin: 0 0 $spacing-xs 0;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $gray-900;
+}
+
+.notification-message {
+  margin: 0;
+  font-size: $font-size-sm;
+  color: $gray-700;
+  line-height: 1.4;
+}
+
+.notification-action {
+  margin-top: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
+  background: transparent;
+  border: 1px solid $primary-orange;
+  border-radius: $radius-sm;
+  color: $primary-orange;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $primary-orange;
+    color: $white;
+  }
+}
+
+.notification-close {
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  color: $gray-500;
+  font-size: $font-size-lg;
+  cursor: pointer;
+  transition: color $transition-fast;
+  flex-shrink: 0;
+
+  &:hover {
+    color: $gray-900;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .notifications-container {
+    top: $spacing-sm;
+    right: $spacing-sm;
+    left: $spacing-sm;
+    max-width: none;
+  }
+}

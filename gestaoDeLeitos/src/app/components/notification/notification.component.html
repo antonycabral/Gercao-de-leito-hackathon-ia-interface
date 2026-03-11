@@ -1,0 +1,38 @@
+<div class="notifications-container">
+  <div
+    *ngFor="let notification of notifications$ | async"
+    class="notification"
+    [class.success]="notification.type === 'success'"
+    [class.error]="notification.type === 'error'"
+    [class.warning]="notification.type === 'warning'"
+    [class.info]="notification.type === 'info'"
+    [@slideIn]>
+
+    <div class="notification-icon">
+      <span *ngIf="notification.type === 'success'">✓</span>
+      <span *ngIf="notification.type === 'error'">✕</span>
+      <span *ngIf="notification.type === 'warning'">⚠</span>
+      <span *ngIf="notification.type === 'info'">ℹ</span>
+    </div>
+
+    <div class="notification-content">
+      <h4 *ngIf="notification.title" class="notification-title">{{ notification.title }}</h4>
+      <p class="notification-message">{{ notification.message }}</p>
+
+      <button
+        *ngIf="notification.action"
+        class="notification-action"
+        (click)="onAction(notification)">
+        {{ notification.action.label }}
+      </button>
+    </div>
+
+    <button
+      *ngIf="notification.dismissible"
+      class="notification-close"
+      (click)="dismiss(notification.id)"
+      aria-label="Fechar">
+      ✕
+    </button>
+  </div>
+</div>

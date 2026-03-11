@@ -1,48 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { WebsocketService } from './core/services/websocket.service';
-import { NotificationService, AppNotification } from './core/services/notification.service';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { LoadingComponent } from './components/loading/loading.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterOutlet, LoadingComponent, NotificationComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'Gestão de Leitos';
-  sidebarCollapsed = false;
-  notifications: AppNotification[] = [];
-
-  readonly navLinks = [
-    { path: '/dashboard', icon: '🏥', label: 'Dashboard', end: true },
-    { path: '/triagem', icon: '🚨', label: 'Triagem' },
-    { path: '/alta', icon: '📋', label: 'Gestão de Alta' },
-    { path: '/limpeza', icon: '🧹', label: 'Limpeza' },
-  ];
-
-  constructor(
-    private wsService: WebsocketService,
-    private notificationService: NotificationService
-  ) {}
-
-  ngOnInit(): void {
-    this.wsService.connect();
-    this.notificationService.notifications$.subscribe(notification => {
-      this.notifications.unshift(notification);
-      if (notification.autoDismiss && notification.dismissAfterMs) {
-        setTimeout(() => this.dismissNotification(notification.id), notification.dismissAfterMs);
-      }
-    });
-  }
-
-  toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-  }
-
-  dismissNotification(id: string): void {
-    this.notifications = this.notifications.filter(n => n.id !== id);
-  }
 }

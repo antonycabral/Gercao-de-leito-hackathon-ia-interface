@@ -1,0 +1,82 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo-container">
+        <div class="logo-icon">🏥</div>
+        <h1>Gestão de Leitos</h1>
+      </div>
+      <p class="subtitle">Sistema Integrado de Gerenciamento Hospitalar</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="seuemail@hospital.com"
+          [class.invalid]="isFieldInvalid('email')"
+        />
+        <span class="error-message" *ngIf="isFieldInvalid('email')">
+          E-mail é obrigatório
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <div class="password-input">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="••••••••"
+            [class.invalid]="isFieldInvalid('password')"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+            aria-label="Mostrar/Ocultar senha"
+          >
+            {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+        <span class="error-message" *ngIf="isFieldInvalid('password')">
+          Senha é obrigatória
+        </span>
+      </div>
+
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="rememberMe" />
+          <span>Lembrar-me</span>
+        </label>
+        <a href="#" class="forgot-password">Esqueceu a senha?</a>
+      </div>
+
+      <button
+        type="submit"
+        class="btn-primary"
+        [disabled]="loginForm.invalid || isLoading"
+      >
+        {{ isLoading ? 'Entrando...' : 'Entrar' }}
+      </button>
+
+      <div class="demo-credentials" *ngIf="!isProduction">
+        <p class="demo-title">Credenciais de Demonstração:</p>
+        <div class="demo-roles">
+          <button type="button" (click)="fillDemoCredentials('ADMIN')">Admin</button>
+          <button type="button" (click)="fillDemoCredentials('MEDICO')">Médico</button>
+          <button type="button" (click)="fillDemoCredentials('ENFERMAGEM')">Enfermagem</button>
+          <button type="button" (click)="fillDemoCredentials('TRIAGEM')">Triagem</button>
+          <button type="button" (click)="fillDemoCredentials('LIMPEZA')">Limpeza</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="login-footer">
+    <p>© 2026 Sistema de Gestão de Leitos - FHIR Compliant</p>
+  </div>
+</div>
