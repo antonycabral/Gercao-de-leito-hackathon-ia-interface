@@ -3,8 +3,8 @@
  */
 export const environment = {
   production: true,
-  apiUrl: '/api',
-  wsUrl: 'wss://seu-dominio.com/ws',
+  apiUrl: '/api/v1',
+  wsUrl: 'wss://seu-dominio.com',
 
   // Configurações de autenticação
   tokenExpirationTime: 3600000, // 1 hora em ms

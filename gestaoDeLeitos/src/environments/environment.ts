@@ -3,8 +3,8 @@
  */
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
-  wsUrl: 'ws://localhost:3000/ws',
+  apiUrl: 'http://localhost:3000/api/v1',
+  wsUrl: 'ws://localhost:3000',
 
   // Configurações de autenticação
   tokenExpirationTime: 3600000, // 1 hora em ms

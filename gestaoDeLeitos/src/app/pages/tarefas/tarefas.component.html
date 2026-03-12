@@ -1,0 +1,62 @@
+<div class="tarefas-container">
+  <div class="page-header">
+    <h2>✓ Tarefas</h2>
+    <button class="btn-primary" (click)="loadTarefas()">
+      🔄 Atualizar
+    </button>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Carregando tarefas...</p>
+  </div>
+
+  <div class="error" *ngIf="error">
+    <p>❌ {{ error }}</p>
+    <button (click)="loadTarefas()">Tentar novamente</button>
+  </div>
+
+  <div class="tarefas-grid" *ngIf="!loading && !error">
+    <div class="tarefa-card" *ngFor="let tarefa of tarefas" [class]="getStatusClass(tarefa.status)">
+      <div class="tarefa-header">
+        <div class="type-badge">
+          {{ getTypeLabel(tarefa.type) }}
+        </div>
+        <span class="priority-badge" [class]="getPriorityClass(tarefa.priority)">
+          {{ getPriorityLabel(tarefa.priority) }}
+        </span>
+      </div>
+
+      <div class="tarefa-body">
+        <div class="status-info">
+          <span class="status-badge" [class]="getStatusClass(tarefa.status)">
+            {{ getStatusLabel(tarefa.status) }}
+          </span>
+        </div>
+
+        <div class="description" *ngIf="tarefa.description">
+          <p>{{ tarefa.description }}</p>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item" *ngIf="tarefa.scheduledFor">
+            <span class="label">📅 Agendada para</span>
+            <span class="value">{{ formatDateTime(tarefa.scheduledFor) }}</span>
+          </div>
+          <div class="info-item" *ngIf="tarefa.startedAt">
+            <span class="label">▶️ Iniciada em</span>
+            <span class="value">{{ formatDateTime(tarefa.startedAt) }}</span>
+          </div>
+          <div class="info-item" *ngIf="tarefa.completedAt">
+            <span class="label">✅ Concluída em</span>
+            <span class="value">{{ formatDateTime(tarefa.completedAt) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="tarefas.length === 0">
+      <p>📭 Nenhuma tarefa cadastrada</p>
+    </div>
+  </div>
+</div>

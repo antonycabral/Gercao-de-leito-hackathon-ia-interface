@@ -115,6 +115,7 @@ export class LoginComponent implements OnInit {
     const redirectMap: Record<UserRole, string> = {
       [UserRole.ADMIN]: '/admin/dashboard',
       [UserRole.MEDICO]: '/medico/dashboard',
+      [UserRole.ENFERMEIRO]: '/enfermeiro/dashboard',
       [UserRole.ENFERMAGEM]: '/enfermagem/dashboard',
       [UserRole.TRIAGEM]: '/triagem/dashboard',
       [UserRole.LIMPEZA]: '/limpeza/dashboard',

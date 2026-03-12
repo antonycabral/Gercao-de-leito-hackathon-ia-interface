@@ -1,0 +1,72 @@
+<div class="pacientes-container">
+  <div class="page-header">
+    <h2>👤 Pacientes</h2>
+    <button class="btn-primary" (click)="loadPacientes()">
+      🔄 Atualizar
+    </button>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Carregando pacientes...</p>
+  </div>
+
+  <div class="error" *ngIf="error">
+    <p>❌ {{ error }}</p>
+    <button (click)="loadPacientes()">Tentar novamente</button>
+  </div>
+
+  <div class="pacientes-list" *ngIf="!loading && !error">
+    <div class="paciente-card" *ngFor="let paciente of pacientes" [class]="getRiskColorClass(paciente.riskColor)">
+      <div class="paciente-header">
+        <div class="header-left">
+          <div class="avatar">
+            {{ paciente.name?.charAt(0) || '?' }}
+          </div>
+          <div class="patient-info">
+            <h3>{{ paciente.name }}</h3>
+            <p class="document">CPF: {{ paciente.documentNumber }}</p>
+          </div>
+        </div>
+        <span class="risk-badge" [class]="getRiskColorClass(paciente.riskColor)">
+          {{ getRiskColorLabel(paciente.riskColor) }}
+        </span>
+      </div>
+
+      <div class="paciente-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">📅 Nascimento</span>
+            <span class="value">{{ formatDate(paciente.birthDate) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">📞 Telefone</span>
+            <span class="value">{{ formatPhone(paciente.phone) }}</span>
+          </div>
+          <div class="info-item" *ngIf="paciente.emergencyContact">
+            <span class="label">🚨 Contato de Emergência</span>
+            <span class="value">{{ paciente.emergencyContact }}</span>
+          </div>
+          <div class="info-item" *ngIf="paciente.emergencyPhone">
+            <span class="label">📱 Telefone de Emergência</span>
+            <span class="value">{{ formatPhone(paciente.emergencyPhone) }}</span>
+          </div>
+        </div>
+
+        <div class="complaint" *ngIf="paciente.chiefComplaint">
+          <span class="label">💬 Queixa Principal:</span>
+          <p>{{ paciente.chiefComplaint }}</p>
+        </div>
+
+        <div class="vital-signs" *ngIf="paciente.vitalSigns">
+          <span class="label">🩺 Sinais Vitais:</span>
+          <p>{{ paciente.vitalSigns }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="pacientes.length === 0">
+      <p>📭 Nenhum paciente cadastrado</p>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,6 @@
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -15,9 +16,10 @@ import { AuthCredentials, AuthResponse, TokenPayload, User, UserRole } from '../
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   private readonly TOKEN_KEY = 'auth_token';
-  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
   private readonly USER_KEY = 'current_user';
 
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
@@ -27,8 +29,10 @@ export class AuthService {
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor() {
-    // Verificar token ao iniciar
-    this.checkTokenExpiration();
+    // Verificar token ao iniciar (apenas no browser)
+    if (this.isBrowser) {
+      this.checkTokenExpiration();
+    }
   }
 
   /**
@@ -49,40 +53,11 @@ export class AuthService {
    * Realiza logout do usuário
    */
   logout(): void {
-    const refreshToken = this.getRefreshToken();
-
-    // Chamar API de logout (opcional, dependendo da implementação do backend)
-    if (refreshToken) {
-      this.http.post(`${environment.apiUrl}/auth/logout`, { refreshToken })
-        .subscribe({
-          error: (error) => console.error('Erro ao fazer logout no servidor:', error)
-        });
-    }
-
     this.clearAuthData();
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Renova o token usando refresh token
-   */
-  refreshToken(): Observable<AuthResponse> {
-    const refreshToken = this.getRefreshToken();
 
-    if (!refreshToken) {
-      this.logout();
-      return throwError(() => new Error('Refresh token não encontrado'));
-    }
-
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/refresh`, { refreshToken })
-      .pipe(
-        tap(response => this.handleAuthSuccess(response)),
-        catchError(error => {
-          this.logout();
-          return throwError(() => error);
-        })
-      );
-  }
 
   /**
    * Verifica se o usuário tem uma role específica
@@ -111,15 +86,11 @@ export class AuthService {
    * Retorna o token de acesso
    */
   getToken(): string | null {
+    if (!this.isBrowser) return null;
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  /**
-   * Retorna o refresh token
-   */
-  getRefreshToken(): string | null {
-    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
-  }
+
 
   /**
    * Verifica se há um token válido
@@ -157,12 +128,7 @@ export class AuthService {
   private checkTokenExpiration(): void {
     setInterval(() => {
       if (!this.hasValidToken()) {
-        const refreshToken = this.getRefreshToken();
-        if (refreshToken) {
-          this.refreshToken().subscribe();
-        } else {
-          this.logout();
-        }
+        this.logout();
       }
     }, 60000); // Verifica a cada minuto
   }
@@ -171,11 +137,12 @@ export class AuthService {
    * Manipula sucesso na autenticação
    */
   private handleAuthSuccess(response: AuthResponse): void {
-    localStorage.setItem(this.TOKEN_KEY, response.token);
-    localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-    localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+    if (this.isBrowser) {
+      localStorage.setItem(this.TOKEN_KEY, response.access_token);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+    }
 
-    this.currentUserSubject.next(response.user);
+    this.currentUserSubject.next(response.user as User);
     this.isAuthenticatedSubject.next(true);
   }
 
@@ -183,6 +150,8 @@ export class AuthService {
    * Recupera usuário do localStorage
    */
   private getUserFromStorage(): User | null {
+    if (!this.isBrowser) return null;
+
     const userJson = localStorage.getItem(this.USER_KEY);
     if (!userJson) return null;
 
@@ -197,9 +166,10 @@ export class AuthService {
    * Limpa dados de autenticação
    */
   private clearAuthData(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
+    if (this.isBrowser) {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);
+    }
 
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);

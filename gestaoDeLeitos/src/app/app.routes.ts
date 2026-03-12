@@ -23,6 +23,18 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
       {
+        path: 'leitos',
+        loadComponent: () => import('./pages/leitos/leitos.component').then(m => m.LeitosComponent)
+      },
+      {
+        path: 'pacientes',
+        loadComponent: () => import('./pages/pacientes/pacientes.component').then(m => m.PacientesComponent)
+      },
+      {
+        path: 'tarefas',
+        loadComponent: () => import('./pages/tarefas/tarefas.component').then(m => m.TarefasComponent)
+      },
+      {
         path: 'admin',
         canActivate: [roleGuard([UserRole.ADMIN])],
         children: [

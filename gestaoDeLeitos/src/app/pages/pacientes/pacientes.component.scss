@@ -1,0 +1,235 @@
+.pacientes-container {
+  padding: 2rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.75rem;
+  }
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+  }
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 3rem;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  color: #d32f2f;
+
+  button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background: #c62828;
+    }
+  }
+}
+
+.pacientes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.paciente-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-left: 4px solid #ddd;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  &.risk-red {
+    border-left-color: #f44336;
+  }
+
+  &.risk-orange {
+    border-left-color: #FF9800;
+  }
+
+  &.risk-yellow {
+    border-left-color: #FFC107;
+  }
+
+  &.risk-green {
+    border-left-color: #4CAF50;
+  }
+
+  &.risk-blue {
+    border-left-color: #2196F3;
+  }
+}
+
+.paciente-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .patient-info {
+    h3 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.25rem;
+      color: #333;
+    }
+
+    .document {
+      margin: 0;
+      color: #666;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.risk-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+
+  &.risk-red {
+    background: #f44336;
+  }
+
+  &.risk-orange {
+    background: #FF9800;
+  }
+
+  &.risk-yellow {
+    background: #FFC107;
+    color: #333;
+  }
+
+  &.risk-green {
+    background: #4CAF50;
+  }
+
+  &.risk-blue {
+    background: #2196F3;
+  }
+}
+
+.paciente-body {
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .label {
+      color: #666;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .value {
+      color: #333;
+      font-size: 1rem;
+    }
+  }
+
+  .complaint, .vital-signs {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+
+    .label {
+      color: #666;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0;
+      color: #333;
+      line-height: 1.5;
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+  font-size: 1.125rem;
+}

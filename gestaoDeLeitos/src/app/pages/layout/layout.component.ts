@@ -59,6 +59,7 @@ export class LayoutComponent implements OnInit {
     const labels: Record<UserRole, string> = {
       [UserRole.ADMIN]: 'Administrador',
       [UserRole.MEDICO]: 'Médico',
+      [UserRole.ENFERMEIRO]: 'Enfermeiro',
       [UserRole.ENFERMAGEM]: 'Enfermagem',
       [UserRole.TRIAGEM]: 'Triagem',
       [UserRole.LIMPEZA]: 'Equipe de Limpeza',
