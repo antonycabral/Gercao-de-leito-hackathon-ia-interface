@@ -1,8 +1,28 @@
 <div class="leitos-container">
   <div class="page-header">
-    <h2>🛏️ Gestão de Leitos</h2>
-    <button class="btn-primary" (click)="loadLeitos()">
-      🔄 Atualizar
+    <div class="header-content">
+      <h2>🛏️ Gestão de Leitos</h2>
+      <p *ngIf="!loading">{{ filteredLeitos.length }} leitos {{ filterLabel ? 'filtrados' : 'no total' }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="loadLeitos()" title="Atualizar lista">
+        🔄 Atualizar
+      </button>
+      <button *ngIf="isAdmin" class="btn-primary" (click)="openCreateModal()" title="Criar novo leito">
+        ➕ Novo Leito
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtro Ativo -->
+  <div class="filter-bar" *ngIf="filterLabel">
+    <div class="filter-info">
+      <span class="filter-icon">🔍</span>
+      <span class="filter-text">Filtro ativo: <strong>{{ filterLabel }}</strong></span>
+      <span class="filter-count">({{ filteredLeitos.length }} de {{ leitos.length }})</span>
+    </div>
+    <button class="btn-clear-filter" (click)="clearFilter()">
+      ❌ Limpar Filtro
     </button>
   </div>
 
@@ -17,7 +37,7 @@
   </div>
 
   <div class="leitos-grid" *ngIf="!loading && !error">
-    <div class="leito-card" *ngFor="let leito of leitos" [class]="getStatusClass(leito.status)">
+    <div class="leito-card" *ngFor="let leito of filteredLeitos" [class]="getStatusClass(leito.status)">
       <div class="leito-header">
         <h3>{{ leito.alias }}</h3>
         <span class="status-badge" [class]="getStatusClass(leito.status)">
@@ -25,23 +45,187 @@
         </span>
       </div>
       <div class="leito-body">
-        <div class="info-row" *ngIf="leito.specialization">
+        <div class="info-row" *ngIf="leito.name">
+          <span class="label">Nome:</span>
+          <span class="value">{{ leito.name }}</span>
+        </div>
+        <div class="info-row" *ngIf="leito.specialization || leito.specialty">
           <span class="label">Especialização:</span>
-          <span class="value">{{ leito.specialization }}</span>
+          <span class="value">{{ leito.specialization || leito.specialty }}</span>
         </div>
         <div class="info-row" *ngIf="leito.type">
           <span class="label">Tipo:</span>
           <span class="value">{{ leito.type }}</span>
         </div>
+        <div class="info-row" *ngIf="leito.floor">
+          <span class="label">Andar:</span>
+          <span class="value">{{ leito.floor }}</span>
+        </div>
+        <div class="info-row" *ngIf="leito.building">
+          <span class="label">Bloco:</span>
+          <span class="value">{{ leito.building }}</span>
+        </div>
         <div class="info-row" *ngIf="leito.capacity">
           <span class="label">Capacidade:</span>
           <span class="value">{{ leito.capacity }}</span>
         </div>
+        <div class="info-row" *ngIf="leito.description">
+          <span class="label">Descrição:</span>
+          <span class="value">{{ leito.description }}</span>
+        </div>
+      </div>
+
+      <!-- Botões de ação (apenas para ADMIN) -->
+      <div class="leito-actions" *ngIf="isAdmin">
+        <button class="btn-icon btn-edit" (click)="openEditModal(leito)" title="Editar">
+          ✏️ Editar
+        </button>
+        <button class="btn-icon btn-delete" (click)="deleteLeito(leito)" title="Excluir">
+          🗑️ Excluir
+        </button>
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="leitos.length === 0">
+    <div class="empty-state" *ngIf="filteredLeitos.length === 0 && leitos.length === 0">
       <p>📭 Nenhum leito cadastrado</p>
     </div>
+
+    <div class="empty-state" *ngIf="filteredLeitos.length === 0 && leitos.length > 0">
+      <p>🔍 Nenhum leito encontrado com este filtro</p>
+      <button class="btn-secondary" (click)="clearFilter()">
+        ❌ Limpar Filtro
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Criação/Edição de Leito -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditing ? '✏️ Editar Leito' : '➕ Novo Leito' }}</h2>
+      <button class="btn-close" (click)="closeModal()">&times;</button>
+    </div>
+
+    <form [formGroup]="leitoForm" (ngSubmit)="onSubmit()" class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="alias">Identificação (Alias) *</label>
+          <input
+            id="alias"
+            type="text"
+            formControlName="alias"
+            placeholder="Ex: Leito 101, UTI 302"
+            [class.invalid]="isFieldInvalid('alias')"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid('alias')">
+            Identificação é obrigatória
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Nome Completo *</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Ex: Leito 101 - Enfermaria"
+            [class.invalid]="isFieldInvalid('name')"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid('name')">
+            Nome é obrigatório
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="status">Status *</label>
+          <select id="status" formControlName="status" [class.invalid]="isFieldInvalid('status')">
+            <option value="disponivel">Disponível</option>
+            <option value="ocupado">Ocupado</option>
+            <option value="higienizacao_necessaria">Higienização Necessária</option>
+            <option value="higienizacao_em_andamento">Em Higienização</option>
+            <option value="manutencao">Manutenção</option>
+            <option value="bloqueado">Bloqueado</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Tipo *</label>
+          <select id="type" formControlName="type" [class.invalid]="isFieldInvalid('type')">
+            <option value="LEITO">Leito</option>
+            <option value="ENFERMARIA">Enfermaria</option>
+            <option value="UTI">UTI</option>
+            <option value="SEMI_INTENSIVA">Semi-Intensiva</option>
+            <option value="ISOLAMENTO">Isolamento</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="specialty">Especialidade</label>
+          <input
+            id="specialty"
+            type="text"
+            formControlName="specialty"
+            placeholder="Ex: Cardiologia, Pediatria"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="capacity">Capacidade *</label>
+          <input
+            id="capacity"
+            type="number"
+            formControlName="capacity"
+            min="1"
+            [class.invalid]="isFieldInvalid('capacity')"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="floor">Andar</label>
+          <input
+            id="floor"
+            type="text"
+            formControlName="floor"
+            placeholder="Ex: 1º Andar, 2º Andar"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="building">Bloco/Ala</label>
+          <input
+            id="building"
+            type="text"
+            formControlName="building"
+            placeholder="Ex: Ala A, Bloco B"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Descrição</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          placeholder="Informações adicionais sobre o leito..."
+        ></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeModal()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="leitoForm.invalid">
+          {{ isEditing ? 'Salvar Alterações' : 'Criar Leito' }}
+        </button>
+      </div>
+    </form>
   </div>
 </div>

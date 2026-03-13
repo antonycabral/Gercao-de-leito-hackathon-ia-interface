@@ -6,6 +6,18 @@
     </button>
   </div>
 
+  <!-- Filtro Ativo -->
+  <div class="filter-bar" *ngIf="filterLabel">
+    <div class="filter-info">
+      <span class="filter-icon">🔍</span>
+      <span class="filter-text">Filtro ativo: <strong>{{ filterLabel }}</strong></span>
+      <span class="filter-count">({{ filteredTarefas.length }} de {{ tarefas.length }})</span>
+    </div>
+    <button class="btn-clear-filter" (click)="clearFilter()">
+      ❌ Limpar Filtro
+    </button>
+  </div>
+
   <div class="loading" *ngIf="loading">
     <div class="spinner"></div>
     <p>Carregando tarefas...</p>
@@ -17,7 +29,7 @@
   </div>
 
   <div class="tarefas-grid" *ngIf="!loading && !error">
-    <div class="tarefa-card" *ngFor="let tarefa of tarefas" [class]="getStatusClass(tarefa.status)">
+    <div class="tarefa-card" *ngFor="let tarefa of filteredTarefas" [class]="getStatusClass(tarefa.status)">
       <div class="tarefa-header">
         <div class="type-badge">
           {{ getTypeLabel(tarefa.type) }}
@@ -55,8 +67,15 @@
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="tarefas.length === 0">
+    <div class="empty-state" *ngIf="filteredTarefas.length === 0 && tarefas.length === 0">
       <p>📭 Nenhuma tarefa cadastrada</p>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredTarefas.length === 0 && tarefas.length > 0">
+      <p>🔍 Nenhuma tarefa encontrada com este filtro</p>
+      <button class="btn-secondary" (click)="clearFilter()">
+        ❌ Limpar Filtro
+      </button>
     </div>
   </div>
 </div>

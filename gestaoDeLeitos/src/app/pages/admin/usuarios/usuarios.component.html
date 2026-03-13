@@ -1,0 +1,254 @@
+<div class="usuarios-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>👥 Gerenciamento de Usuários</h1>
+      <p>Crie e gerencie usuários do sistema</p>
+    </div>
+    <button class="btn-primary" (click)="openCreateModal()">
+      ➕ Novo Usuário
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onFilterChange()"
+        placeholder="🔍 Buscar por nome ou email..."
+        class="search-input"
+      />
+    </div>
+
+    <div class="filter-group">
+      <select
+        [(ngModel)]="filterRole"
+        (ngModelChange)="onFilterChange()"
+        class="filter-select"
+      >
+        <option value="">Todos os perfis</option>
+        <option *ngFor="let role of roles" [value]="role.value">
+          {{ role.label }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-info">
+      <span>{{ filteredUsuarios.length }} de {{ usuarios.length }} usuários</span>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando usuários...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="error-container">
+    <p>❌ {{ error }}</p>
+    <button class="btn-secondary" (click)="loadUsuarios()">Tentar Novamente</button>
+  </div>
+
+  <!-- Lista de Usuários -->
+  <div *ngIf="!loading && !error" class="usuarios-grid">
+    <div *ngFor="let usuario of filteredUsuarios" class="usuario-card" [class.inactive]="!usuario.active">
+      <div class="card-header">
+        <div class="user-avatar">
+          {{ usuario.name.charAt(0).toUpperCase() }}
+        </div>
+        <div class="user-info">
+          <h3>{{ usuario.name }}</h3>
+          <span class="user-email">{{ usuario.email }}</span>
+        </div>
+        <div class="status-badge" [class.active]="usuario.active">
+          {{ usuario.active ? '✓ Ativo' : '✗ Inativo' }}
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">Perfil:</span>
+          <span class="role-badge" [attr.data-role]="usuario.role">
+            {{ getRoleLabel(usuario.role) }}
+          </span>
+        </div>
+
+        <div class="info-row" *ngIf="usuario.cpf">
+          <span class="info-label">CPF:</span>
+          <span>{{ usuario.cpf }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="usuario.specialty">
+          <span class="info-label">Especialidade:</span>
+          <span>{{ usuario.specialty }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="usuario.crm">
+          <span class="info-label">CRM:</span>
+          <span>{{ usuario.crm }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="usuario.coren">
+          <span class="info-label">COREN:</span>
+          <span>{{ usuario.coren }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-icon btn-edit" (click)="openEditModal(usuario)" title="Editar">
+          ✏️
+        </button>
+        <button
+          class="btn-icon btn-toggle"
+          (click)="toggleStatus(usuario)"
+          [title]="usuario.active ? 'Desativar' : 'Ativar'"
+        >
+          {{ usuario.active ? '🔒' : '🔓' }}
+        </button>
+        <button class="btn-icon btn-delete" (click)="deleteUsuario(usuario)" title="Excluir">
+          🗑️
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && filteredUsuarios.length === 0" class="empty-state">
+    <p class="empty-icon">👤</p>
+    <p class="empty-message">Nenhum usuário encontrado</p>
+    <button class="btn-primary" (click)="openCreateModal()">Criar Primeiro Usuário</button>
+  </div>
+</div>
+
+<!-- Modal de Criação/Edição -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditing ? '✏️ Editar Usuário' : '➕ Novo Usuário' }}</h2>
+      <button class="btn-close" (click)="closeModal()">✕</button>
+    </div>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Nome Completo *</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Ex: Dr. João Silva"
+            [class.invalid]="isFieldInvalid('name')"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid('name')">
+            Nome é obrigatório (mínimo 3 caracteres)
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="usuario@hospital.com"
+            [class.invalid]="isFieldInvalid('email')"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid('email')">
+            Email válido é obrigatório
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha {{ isEditing ? '(deixe em branco para manter)' : '*' }}</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="Mínimo 6 caracteres"
+            [class.invalid]="isFieldInvalid('password')"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid('password')">
+            Senha é obrigatória (mínimo 6 caracteres)
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="role">Perfil *</label>
+          <select
+            id="role"
+            formControlName="role"
+            [class.invalid]="isFieldInvalid('role')"
+          >
+            <option value="">Selecione um perfil</option>
+            <option *ngFor="let role of roles" [value]="role.value">
+              {{ role.label }}
+            </option>
+          </select>
+          <span class="error-message" *ngIf="isFieldInvalid('role')">
+            Perfil é obrigatório
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="cpf">CPF</label>
+          <input
+            id="cpf"
+            type="text"
+            formControlName="cpf"
+            placeholder="000.000.000-00"
+          />
+        </div>
+      </div>
+
+      <!-- Campos específicos por role -->
+      <div class="form-row" *ngIf="userForm.get('role')?.value === 'MEDICO'">
+        <div class="form-group">
+          <label for="specialty">Especialidade</label>
+          <input
+            id="specialty"
+            type="text"
+            formControlName="specialty"
+            placeholder="Ex: Cardiologia"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="crm">CRM</label>
+          <input
+            id="crm"
+            type="text"
+            formControlName="crm"
+            placeholder="CRM-SP 123456"
+          />
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="userForm.get('role')?.value === 'ENFERMEIRO' || userForm.get('role')?.value === 'ENFERMAGEM'">
+        <div class="form-group">
+          <label for="coren">COREN</label>
+          <input
+            id="coren"
+            type="text"
+            formControlName="coren"
+            placeholder="COREN-SP 123456"
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeModal()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="userForm.invalid">
+          {{ isEditing ? 'Salvar Alterações' : 'Criar Usuário' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

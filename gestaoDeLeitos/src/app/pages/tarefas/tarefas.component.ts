@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 import { TaskService } from '../../core/services/task.service';
 
 @Component({
@@ -11,13 +13,25 @@ import { TaskService } from '../../core/services/task.service';
 })
 export class TarefasComponent implements OnInit {
   private taskService = inject(TaskService);
+  private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
 
   tarefas: any[] = [];
+  filteredTarefas: any[] = [];
   loading = false;
   error: string | null = null;
+  filterPendentes: boolean = false;
+  filterMinhas: boolean = false;
+  filterLabel: string = '';
 
   ngOnInit(): void {
-    this.loadTarefas();
+    // Observa mudanças nos query params
+    this.route.queryParams.subscribe(params => {
+      this.filterPendentes = params['status'] === 'pendentes';
+      this.filterMinhas = params['minhas'] === 'true';
+      this.updateFilterLabel();
+      this.loadTarefas();
+    });
   }
 
   loadTarefas(): void {
@@ -27,6 +41,7 @@ export class TarefasComponent implements OnInit {
     this.taskService.getAll().subscribe({
       next: (data) => {
         this.tarefas = data;
+        this.applyFilter();
         this.loading = false;
       },
       error: (err) => {
@@ -35,6 +50,46 @@ export class TarefasComponent implements OnInit {
         console.error('Erro ao carregar tarefas:', err);
       }
     });
+  }
+
+  applyFilter(): void {
+    let filtered = [...this.tarefas];
+
+    // Filtro por status pendente
+    if (this.filterPendentes) {
+      filtered = filtered.filter(t =>
+        t.status === 'solicitada' ||
+        t.status === 'aceita' ||
+        t.status === 'em_andamento'
+      );
+    }
+
+    // Filtro por tarefas do usuário logado
+    if (this.filterMinhas) {
+      const currentUser = this.authService.getCurrentUser();
+      if (currentUser) {
+        filtered = filtered.filter(t =>
+          t.assignedTo?.id === currentUser.id ||
+          t.requestedBy?.id === currentUser.id
+        );
+      }
+    }
+
+    this.filteredTarefas = filtered;
+  }
+
+  updateFilterLabel(): void {
+    const labels: string[] = [];
+    if (this.filterPendentes) labels.push('Pendentes');
+    if (this.filterMinhas) labels.push('Minhas Tarefas');
+    this.filterLabel = labels.length > 0 ? labels.join(' - ') : '';
+  }
+
+  clearFilter(): void {
+    this.filterPendentes = false;
+    this.filterMinhas = false;
+    this.filterLabel = '';
+    this.applyFilter();
   }
 
   getTypeLabel(type: string): string {

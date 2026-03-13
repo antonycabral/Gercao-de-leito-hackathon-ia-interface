@@ -1,4 +1,62 @@
-<div class="dashboard-placeholder">
-  <h1>Dashboard</h1>
-  <p>Bem-vindo ao sistema de Gestão de Leitos</p>
+<div class="dashboard-container">
+  <!-- Header de Boas-vindas -->
+  <div class="welcome-section">
+    <h1>👋 Bem-vindo, {{ getUserName() }}!</h1>
+    <p class="user-role">{{ getUserRoleLabel() }} - Visão geral do sistema de gestão de leitos</p>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Carregando dados...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error" *ngIf="error">
+    <p>❌ {{ error }}</p>
+    <button (click)="loadDashboardData()">Tentar novamente</button>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="!loading && !error">
+    <!-- Cards de Estatísticas Dinâmicos -->
+    <div class="stats-grid">
+      <div
+        *ngFor="let card of cards"
+        class="stat-card"
+        [ngClass]="card.color"
+        [class.clickable]="card.route"
+        (click)="handleCardClick(card)">
+        <div class="stat-icon">{{ card.icon }}</div>
+        <div class="stat-content">
+          <h3>{{ card.title }}</h3>
+          <p class="stat-number">{{ card.value }}</p>
+          <span class="stat-label">{{ card.label }}</span>
+
+          <!-- Progress bar especial para Taxa de Ocupação -->
+          <div class="progress-bar" *ngIf="card.title === 'Taxa de Ocupação'">
+            <div class="progress-fill" [style.width.%]="getProgressBarWidth()"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações Rápidas Dinâmicas -->
+    <div class="quick-actions" *ngIf="quickActions.length > 0">
+      <h2>🚀 Ações Rápidas</h2>
+      <div class="actions-grid">
+        <button
+          *ngFor="let action of quickActions"
+          class="action-btn"
+          [ngClass]="action.color"
+          (click)="handleActionClick(action)">
+          <span class="action-icon">{{ action.icon }}</span>
+          <span class="action-text">
+            <strong>{{ action.title }}</strong>
+            <small>{{ action.subtitle }}</small>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

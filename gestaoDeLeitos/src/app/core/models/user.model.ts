@@ -22,8 +22,12 @@ export interface User {
   email: string;
   role: UserRole;
   active: boolean;
-  specialization?: string; // Para médicos
-  registrationNumber?: string; // CRM, COREN, etc
+  specialization?: string; // Para médicos (legado)
+  specialty?: string; // Para médicos
+  registrationNumber?: string; // CRM, COREN, etc (legado)
+  cpf?: string;
+  crm?: string; // Para médicos
+  coren?: string; // Para enfermeiros
   createdAt: Date;
   updatedAt: Date;
 }

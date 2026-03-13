@@ -68,8 +68,11 @@ export class LoginComponent implements OnInit {
           'Login realizado com sucesso'
         );
 
-        // Redireciona baseado no role
-        this.redirectBasedOnRole(response.user.role);
+        // Pequeno delay para garantir que localStorage seja escrito
+        setTimeout(() => {
+          // Redireciona baseado no role
+          this.redirectBasedOnRole(response.user.role);
+        }, 150);
       },
       error: (error) => {
         this.isLoading = false;
@@ -109,20 +112,11 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * Redireciona usuário baseado no seu role
+   * Redireciona usuário após login
+   * O dashboard universal se adapta automaticamente à role do usuário
    */
   private redirectBasedOnRole(role: UserRole): void {
-    const redirectMap: Record<UserRole, string> = {
-      [UserRole.ADMIN]: '/admin/dashboard',
-      [UserRole.MEDICO]: '/medico/dashboard',
-      [UserRole.ENFERMEIRO]: '/enfermeiro/dashboard',
-      [UserRole.ENFERMAGEM]: '/enfermagem/dashboard',
-      [UserRole.TRIAGEM]: '/triagem/dashboard',
-      [UserRole.LIMPEZA]: '/limpeza/dashboard',
-      [UserRole.ACOMPANHANTE]: '/acompanhante/dashboard'
-    };
-
-    const redirectPath = redirectMap[role] || '/dashboard';
-    this.router.navigate([redirectPath]);
+    console.log('LOGIN: Redirecionando para /dashboard com role =', role);
+    this.router.navigate(['/dashboard']);
   }
 }
