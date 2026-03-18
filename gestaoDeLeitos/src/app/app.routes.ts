@@ -75,6 +75,14 @@ export const routes: Routes = [
           {
             path: 'dashboard',
             loadComponent: () => import('./pages/triagem/triagem-dashboard/triagem-dashboard.component').then(m => m.TriagemDashboardComponent)
+          },
+          {
+            path: 'novo',
+            loadComponent: () => import('./pages/triagem/triagem-form/triagem-form.component').then(m => m.TriagemFormComponent)
+          },
+          {
+            path: 'fila-espera',
+            loadComponent: () => import('./pages/triagem/fila-espera/fila-espera.component').then(m => m.FilaEsperaComponent)
           }
         ]
       },

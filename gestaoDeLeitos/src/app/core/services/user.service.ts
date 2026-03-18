@@ -55,7 +55,7 @@ export class UserService {
    * Cria um novo usuário (registro por ADMIN)
    */
   register(userData: RegisterUserDto): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/auth/register`, userData);
+    return this.http.post<User>(`${this.apiUrl}/users`, userData);
   }
 
   /**

@@ -1,21 +1,71 @@
 <div class="triagem-dashboard">
-  <h1>Dashboard Triagem</h1>
+  <h1>🏥 Dashboard Triagem</h1>
+  <p class="subtitle">Sistema de Classificação de Risco e Gestão de Filas</p>
+
   <div class="cards-grid">
-    <div class="card highlight">
-      <h3>🚑 Novo Paciente</h3>
-      <p>Registrar chegada e triagem</p>
+    <div class="card highlight" (click)="navigateTo('/triagem/novo')">
+      <div class="card-icon">🚑</div>
+      <h3>Novo Paciente</h3>
+      <p>Registrar chegada e realizar triagem</p>
     </div>
-    <div class="card">
-      <h3>📋 Fila de Espera</h3>
-      <p>Pacientes aguardando atendimento</p>
+
+    <div class="card" (click)="navigateTo('/triagem/fila-espera')">
+      <div class="card-icon">⏳</div>
+      <h3>Fila de Espera</h3>
+      <p>Pacientes aguardando alocação de leito</p>
     </div>
-    <div class="card">
-      <h3>🏥 Protocolo Manchester</h3>
-      <p>Classificação de risco</p>
+
+    <div class="card" (click)="navigateTo('/leitos')">
+      <div class="card-icon">🛏️</div>
+      <h3>Leitos Disponíveis</h3>
+      <p>Verificar disponibilidade de leitos</p>
     </div>
-    <div class="card">
-      <h3>🛏️ Solicitar Leito</h3>
-      <p>Buscar leito disponível</p>
+
+    <div class="card" (click)="navigateTo('/pacientes')">
+      <div class="card-icon">📋</div>
+      <h3>Pacientes</h3>
+      <p>Ver todos os pacientes cadastrados</p>
+    </div>
+  </div>
+
+  <div class="manchester-protocol">
+    <h2>📑 Protocolo de Manchester</h2>
+    <div class="protocol-cards">
+      <div class="protocol-item red">
+        <span class="color-dot"></span>
+        <div>
+          <strong>Vermelho - Emergência</strong>
+          <p>Atendimento imediato</p>
+        </div>
+      </div>
+      <div class="protocol-item orange">
+        <span class="color-dot"></span>
+        <div>
+          <strong>Laranja - Muito Urgente</strong>
+          <p>Até 10 minutos</p>
+        </div>
+      </div>
+      <div class="protocol-item yellow">
+        <span class="color-dot"></span>
+        <div>
+          <strong>Amarelo - Urgente</strong>
+          <p>Até 60 minutos</p>
+        </div>
+      </div>
+      <div class="protocol-item green">
+        <span class="color-dot"></span>
+        <div>
+          <strong>Verde - Pouco Urgente</strong>
+          <p>Até 120 minutos</p>
+        </div>
+      </div>
+      <div class="protocol-item blue">
+        <span class="color-dot"></span>
+        <div>
+          <strong>Azul - Não Urgente</strong>
+          <p>Até 240 minutos</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>

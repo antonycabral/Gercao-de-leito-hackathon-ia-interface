@@ -1,0 +1,294 @@
+<div class="triagem-container">
+  <div class="page-header">
+    <div>
+      <h2>🏥 Triagem de Paciente</h2>
+      <p>Cadastro e Classificação de Risco Manchester</p>
+    </div>
+    <button class="btn-cancel" (click)="cancel()">
+      ❌ Cancelar
+    </button>
+  </div>
+
+  <!-- Steps Progress -->
+  <div class="steps-indicator">
+    <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+      <div class="step-number">1</div>
+      <span>Dados do Paciente</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+      <div class="step-number">2</div>
+      <span>Sinais Vitais</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" [class.active]="currentStep === 3">
+      <div class="step-number">3</div>
+      <span>Classificação de Risco</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: Dados do Paciente -->
+  <div class="form-step" *ngIf="currentStep === 1">
+    <form [formGroup]="patientForm">
+      <div class="section-title">
+        <h3>👤 Informações do Paciente</h3>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="name">Nome Completo *</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Digite o nome completo"
+            [class.invalid]="isFieldInvalid(patientForm, 'name')"
+            appUppercase
+          />
+          <span class="error-message" *ngIf="isFieldInvalid(patientForm, 'name')">
+            Nome é obrigatório
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="documentNumber">CPF/RG *</label>
+          <input
+            id="documentNumber"
+            type="text"
+            formControlName="documentNumber"
+            placeholder="000.000.000-00"
+            [class.invalid]="isFieldInvalid(patientForm, 'documentNumber')"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid(patientForm, 'documentNumber')">
+            Documento é obrigatório
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="birthDate">Data de Nascimento *</label>
+          <input
+            id="birthDate"
+            type="date"
+            formControlName="birthDate"
+            [class.invalid]="isFieldInvalid(patientForm, 'birthDate')"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid(patientForm, 'birthDate')">
+            Data de nascimento é obrigatória
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Telefone</label>
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            placeholder="(00) 00000-0000"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="emergencyContact">Contato de Emergência</label>
+          <input
+            id="emergencyContact"
+            type="text"
+            formControlName="emergencyContact"
+            placeholder="Nome do contato"
+            appUppercase
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="emergencyPhone">Telefone de Emergência</label>
+          <input
+            id="emergencyPhone"
+            type="tel"
+            formControlName="emergencyPhone"
+            placeholder="(00) 00000-0000"
+          />
+        </div>
+      </div>
+
+      <div class="section-title">
+        <h3>💬 Queixa Principal</h3>
+      </div>
+
+      <div class="form-group">
+        <label for="chiefComplaint">Descrição da Queixa *</label>
+        <textarea
+          id="chiefComplaint"
+          formControlName="chiefComplaint"
+          rows="4"
+          placeholder="Descreva o motivo da procura pelo atendimento..."
+          [class.invalid]="isFieldInvalid(patientForm, 'chiefComplaint')"
+          appUppercase
+        ></textarea>
+        <span class="error-message" *ngIf="isFieldInvalid(patientForm, 'chiefComplaint')">
+          Queixa principal é obrigatória
+        </span>
+      </div>
+    </form>
+  </div>
+
+  <!-- STEP 2: Sinais Vitais -->
+  <div class="form-step" *ngIf="currentStep === 2">
+    <form [formGroup]="vitalSignsForm">
+      <div class="section-title">
+        <h3>🩺 Sinais Vitais</h3>
+        <p class="subtitle">Preencha os sinais vitais aferidos (opcional)</p>
+      </div>
+
+      <div class="vital-signs-grid">
+        <div class="form-group">
+          <label for="temperature">🌡️ Temperatura (°C)</label>
+          <input
+            id="temperature"
+            type="number"
+            step="0.1"
+            formControlName="temperature"
+            placeholder="36.5"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="heartRate">❤️ Frequência Cardíaca (BPM)</label>
+          <input
+            id="heartRate"
+            type="number"
+            formControlName="heartRate"
+            placeholder="80"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="respiratoryRate">🫁 Frequência Respiratória (RPM)</label>
+          <input
+            id="respiratoryRate"
+            type="number"
+            formControlName="respiratoryRate"
+            placeholder="16"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="oxygenSaturation">💨 Saturação O2 (%)</label>
+          <input
+            id="oxygenSaturation"
+            type="number"
+            formControlName="oxygenSaturation"
+            placeholder="98"
+            min="0"
+            max="100"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>🩸 Pressão Arterial (mmHg)</label>
+          <div class="pressure-group">
+            <input
+              type="number"
+              formControlName="systolic"
+              placeholder="Sistólica"
+            />
+            <span class="divider">/</span>
+            <input
+              type="number"
+              formControlName="diastolic"
+              placeholder="Diastólica"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="glucose">🍭 Glicemia (mg/dL)</label>
+          <input
+            id="glucose"
+            type="number"
+            formControlName="glucose"
+            placeholder="100"
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label for="painScale">😣 Escala de Dor (0-10)</label>
+          <div class="pain-scale">
+            <input
+              id="painScale"
+              type="range"
+              min="0"
+              max="10"
+              formControlName="painScale"
+            />
+            <span class="pain-value">{{ vitalSignsForm.get('painScale')?.value }}</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- STEP 3: Classificação de Risco -->
+  <div class="form-step" *ngIf="currentStep === 3">
+    <div class="section-title">
+      <h3>🚑 Classificação de Risco Manchester</h3>
+      <p class="subtitle">Selecione a classificação baseada na gravidade do paciente</p>
+    </div>
+
+    <div class="risk-classification-grid">
+      <div
+        *ngFor="let risk of riskColors"
+        class="risk-card"
+        [class.selected]="selectedRisk === risk.value"
+        (click)="selectRisk(risk.value)"
+        [style.border-color]="selectedRisk === risk.value ? risk.color : 'transparent'"
+      >
+        <div class="risk-icon" [style.color]="risk.color">{{ risk.icon }}</div>
+        <h4 [style.color]="risk.color">{{ risk.label }}</h4>
+        <p class="risk-description">{{ risk.description }}</p>
+        <div class="risk-color-bar" [style.background]="risk.color"></div>
+      </div>
+    </div>
+
+    <div class="classification-warning" *ngIf="selectedRisk === 'vermelho' || selectedRisk === 'laranja'">
+      <span class="warning-icon">⚠️</span>
+      <div>
+        <strong>Atenção:</strong> Pacientes com classificação
+        <strong>{{ selectedRisk === 'vermelho' ? 'Emergência' : 'Muito Urgente' }}</strong>
+        requerem atendimento prioritário imediato!
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="form-actions">
+    <button
+      *ngIf="currentStep > 1"
+      class="btn-secondary"
+      (click)="previousStep()"
+      [disabled]="loading"
+    >
+      ⬅️ Anterior
+    </button>
+
+    <button
+      *ngIf="currentStep < 3"
+      class="btn-primary"
+      (click)="nextStep()"
+    >
+      Próximo ➡️
+    </button>
+
+    <button
+      *ngIf="currentStep === 3"
+      class="btn-success"
+      (click)="onSubmit()"
+      [disabled]="loading || patientForm.invalid"
+    >
+      <span *ngIf="!loading">✅ Concluir Triagem</span>
+      <span *ngIf="loading">⏳ Salvando...</span>
+    </button>
+  </div>
+</div>

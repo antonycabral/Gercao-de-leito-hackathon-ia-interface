@@ -15,15 +15,52 @@
   </div>
 
   <!-- Filtro Ativo -->
-  <div class="filter-bar" *ngIf="filterLabel">
+  <div class="filter-bar" *ngIf="filterLabel || filterBuilding || filterFloor">
     <div class="filter-info">
       <span class="filter-icon">🔍</span>
-      <span class="filter-text">Filtro ativo: <strong>{{ filterLabel }}</strong></span>
+      <span class="filter-text">
+        <span *ngIf="filterLabel">Filtro ativo: <strong>{{ filterLabel }}</strong></span>
+        <span *ngIf="filterBuilding"> | Bloco/Ala: <strong>{{ filterBuilding }}</strong></span>
+        <span *ngIf="filterFloor"> | Andar: <strong>{{ filterFloor }}</strong></span>
+      </span>
       <span class="filter-count">({{ filteredLeitos.length }} de {{ leitos.length }})</span>
     </div>
     <button class="btn-clear-filter" (click)="clearFilter()">
-      ❌ Limpar Filtro
+      ❌ Limpar Filtros
     </button>
+  </div>
+
+  <!-- Filtros Adicionais -->
+  <div class="filters-section" *ngIf="!loading && !error">
+    <div class="filter-group">
+      <label for="filterBuilding">🏢 Filtrar por Bloco/Ala:</label>
+      <select
+        id="filterBuilding"
+        [(ngModel)]="filterBuilding"
+        (change)="onBuildingChange()"
+        class="filter-select"
+      >
+        <option value="">Todos os Blocos/Alas</option>
+        <option *ngFor="let building of availableBuildings" [value]="building">
+          {{ building }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filterFloor">🏗️ Filtrar por Andar:</label>
+      <select
+        id="filterFloor"
+        [(ngModel)]="filterFloor"
+        (change)="onFloorChange()"
+        class="filter-select"
+      >
+        <option value="">Todos os Andares</option>
+        <option *ngFor="let floor of availableFloors" [value]="floor">
+          {{ floor }}
+        </option>
+      </select>
+    </div>
   </div>
 
   <div class="loading" *ngIf="loading">
@@ -117,6 +154,7 @@
             formControlName="alias"
             placeholder="Ex: Leito 101, UTI 302"
             [class.invalid]="isFieldInvalid('alias')"
+            appUppercase
           />
           <span class="error-message" *ngIf="isFieldInvalid('alias')">
             Identificação é obrigatória
@@ -131,6 +169,7 @@
             formControlName="name"
             placeholder="Ex: Leito 101 - Enfermaria"
             [class.invalid]="isFieldInvalid('name')"
+            appUppercase
           />
           <span class="error-message" *ngIf="isFieldInvalid('name')">
             Nome é obrigatório
@@ -154,11 +193,11 @@
         <div class="form-group">
           <label for="type">Tipo *</label>
           <select id="type" formControlName="type" [class.invalid]="isFieldInvalid('type')">
-            <option value="LEITO">Leito</option>
-            <option value="ENFERMARIA">Enfermaria</option>
-            <option value="UTI">UTI</option>
-            <option value="SEMI_INTENSIVA">Semi-Intensiva</option>
-            <option value="ISOLAMENTO">Isolamento</option>
+            <option value="leito">Leito</option>
+            <option value="ala">Ala</option>
+            <option value="andar">Andar</option>
+            <option value="bloco">Bloco</option>
+            <option value="unidade">Unidade</option>
           </select>
         </div>
       </div>
@@ -171,6 +210,7 @@
             type="text"
             formControlName="specialty"
             placeholder="Ex: Cardiologia, Pediatria"
+            appUppercase
           />
         </div>
 
@@ -194,6 +234,7 @@
             type="text"
             formControlName="floor"
             placeholder="Ex: 1º Andar, 2º Andar"
+            appUppercase
           />
         </div>
 
@@ -201,6 +242,11 @@
           <label for="building">Bloco/Ala</label>
           <input
             id="building"
+            type="text"
+            formControlName="building"
+            placeholder="Ex: Ala A, Bloco B"
+            appUppercase
+          />
             type="text"
             formControlName="building"
             placeholder="Ex: Ala A, Bloco B"
@@ -215,6 +261,7 @@
           formControlName="description"
           rows="3"
           placeholder="Informações adicionais sobre o leito..."
+          appUppercase
         ></textarea>
       </div>
 

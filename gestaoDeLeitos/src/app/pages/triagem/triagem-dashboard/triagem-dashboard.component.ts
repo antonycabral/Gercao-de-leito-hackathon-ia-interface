@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-triagem-dashboard',
@@ -9,5 +10,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./triagem-dashboard.component.scss']
 })
 export class TriagemDashboardComponent {
+  constructor(private router: Router) {}
 
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
+  }
 }

@@ -1,38 +1,170 @@
-@import '../../../../styles/colors.scss';
-@import '../../../../styles/variables.scss';
-
 .triagem-dashboard {
-  h1 {
-    margin-bottom: $spacing-xl;
-  }
-}
+  padding: 2rem;
 
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $spacing-lg;
+  h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
 
   .card {
-    text-align: center;
-    transition: transform $transition-base;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
     cursor: pointer;
+    border: 2px solid transparent;
 
     &:hover {
-      transform: translateY(-4px);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      border-color: #667eea;
     }
 
-    &.highlight {
-      border: 2px solid $primary-orange;
-      background: rgba($primary-orange, 0.05);
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-align: center;
     }
 
     h3 {
-      font-size: $font-size-2xl;
-      margin-bottom: $spacing-sm;
+      color: #1e293b;
+      font-size: 1.25rem;
+      margin: 0 0 0.5rem 0;
+      text-align: center;
     }
 
     p {
-      color: $gray-600;
+      color: #64748b;
+      margin: 0;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    &.highlight {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+      h3,
+      p {
+        color: white;
+      }
+
+      &:hover {
+        transform: translateY(-5px) scale(1.02);
+        border-color: #5468d8;
+      }
+    }
+  }
+
+  .manchester-protocol {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    h2 {
+      color: #1e293b;
+      margin: 0 0 1.5rem 0;
+      font-size: 1.5rem;
+    }
+
+    .protocol-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .protocol-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #f8fafc;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateX(5px);
+      }
+
+      .color-dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      strong {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 0.95rem;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #64748b;
+      }
+
+      &.red {
+        border-left: 4px solid #DC2626;
+        .color-dot {
+          background: #DC2626;
+        }
+      }
+
+      &.orange {
+        border-left: 4px solid #FB923C;
+        .color-dot {
+          background: #FB923C;
+        }
+      }
+
+      &.yellow {
+        border-left: 4px solid #FBBF24;
+        .color-dot {
+          background: #FBBF24;
+        }
+      }
+
+      &.green {
+        border-left: 4px solid #22C55E;
+        .color-dot {
+          background: #22C55E;
+        }
+      }
+
+      &.blue {
+        border-left: 4px solid #3B82F6;
+        .color-dot {
+          background: #3B82F6;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .triagem-dashboard {
+    padding: 1rem;
+
+    .cards-grid,
+    .protocol-cards {
+      grid-template-columns: 1fr;
     }
   }
 }

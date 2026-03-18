@@ -5,11 +5,12 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LocationService } from '../../core/services/location.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { UppercaseDirective } from '../../shared/directives/uppercase.directive';
 
 @Component({
   selector: 'app-leitos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, UppercaseDirective],
   templateUrl: './leitos.component.html',
   styleUrls: ['./leitos.component.scss']
 })
@@ -26,6 +27,12 @@ export class LeitosComponent implements OnInit {
   error: string | null = null;
   filterStatus: string | null = null;
   filterLabel: string = '';
+
+  // Filtros por ala/bloco
+  filterBuilding: string = '';
+  filterFloor: string = '';
+  availableBuildings: string[] = [];
+  availableFloors: string[] = [];
 
   // Modal
   showModal = false;
@@ -56,7 +63,7 @@ export class LeitosComponent implements OnInit {
       name: ['', Validators.required],
       description: [''],
       status: ['disponivel', Validators.required],
-      type: ['LEITO', Validators.required],
+      type: ['leito', Validators.required],
       specialty: [''],
       floor: [''],
       building: [''],
@@ -71,6 +78,7 @@ export class LeitosComponent implements OnInit {
     this.locationService.getAll().subscribe({
       next: (data) => {
         this.leitos = data;
+        this.extractFilters();
         this.applyFilter();
         this.loading = false;
       },
@@ -82,21 +90,49 @@ export class LeitosComponent implements OnInit {
     });
   }
 
+  extractFilters(): void {
+    // Extrair blocos/alas únicos
+    const buildings = new Set<string>();
+    const floors = new Set<string>();
+
+    this.leitos.forEach(leito => {
+      if (leito.building) {
+        buildings.add(leito.building);
+      }
+      if (leito.floor) {
+        floors.add(leito.floor);
+      }
+    });
+
+    this.availableBuildings = Array.from(buildings).sort();
+    this.availableFloors = Array.from(floors).sort();
+  }
+
   applyFilter(): void {
-    if (!this.filterStatus) {
-      this.filteredLeitos = this.leitos;
-      return;
+    let filtered = [...this.leitos];
+
+    // Filtro por status
+    if (this.filterStatus) {
+      if (this.filterStatus === 'disponivel') {
+        filtered = filtered.filter(l => l.status === 'disponivel');
+      } else if (this.filterStatus === 'ocupado') {
+        filtered = filtered.filter(l =>
+          l.status === 'ocupado' || l.status === 'ocupado_ausente'
+        );
+      }
     }
 
-    if (this.filterStatus === 'disponivel') {
-      this.filteredLeitos = this.leitos.filter(l => l.status === 'disponivel');
-    } else if (this.filterStatus === 'ocupado') {
-      this.filteredLeitos = this.leitos.filter(l =>
-        l.status === 'ocupado' || l.status === 'ocupado_ausente'
-      );
-    } else {
-      this.filteredLeitos = this.leitos;
+    // Filtro por bloco/ala
+    if (this.filterBuilding) {
+      filtered = filtered.filter(l => l.building === this.filterBuilding);
     }
+
+    // Filtro por andar
+    if (this.filterFloor) {
+      filtered = filtered.filter(l => l.floor === this.filterFloor);
+    }
+
+    this.filteredLeitos = filtered;
   }
 
   updateFilterLabel(): void {
@@ -112,6 +148,16 @@ export class LeitosComponent implements OnInit {
   clearFilter(): void {
     this.filterStatus = null;
     this.filterLabel = '';
+    this.filterBuilding = '';
+    this.filterFloor = '';
+    this.applyFilter();
+  }
+
+  onBuildingChange(): void {
+    this.applyFilter();
+  }
+
+  onFloorChange(): void {
     this.applyFilter();
   }
 
@@ -148,7 +194,7 @@ export class LeitosComponent implements OnInit {
     this.editingLeitoId = null;
     this.leitoForm.reset({
       status: 'disponivel',
-      type: 'LEITO',
+      type: 'leito',
       capacity: 1
     });
     this.showModal = true;
@@ -163,7 +209,7 @@ export class LeitosComponent implements OnInit {
       name: leito.name,
       description: leito.description || '',
       status: leito.status,
-      type: leito.type || 'LEITO',
+      type: leito.type || 'leito',
       specialty: leito.specialty || '',
       floor: leito.floor || '',
       building: leito.building || '',

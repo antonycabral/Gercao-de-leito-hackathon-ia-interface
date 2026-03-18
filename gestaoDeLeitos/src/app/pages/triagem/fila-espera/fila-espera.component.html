@@ -1,0 +1,146 @@
+<div class="fila-espera-container">
+  <div class="header">
+    <button class="btn-back" (click)="voltar()">← Voltar</button>
+    <h1>🏥 Fila de Espera</h1>
+    <button class="btn-refresh" (click)="refreshData()">
+      <span *ngIf="!loading">🔄 Atualizar</span>
+      <span *ngIf="loading">⏳ Carregando...</span>
+    </button>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-value">{{filaEspera.length}}</span>
+      <span class="stat-label">Pacientes Aguardando</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">{{leitosDisponiveis.length}}</span>
+      <span class="stat-label">Leitos Disponíveis</span>
+    </div>
+  </div>
+
+  <div class="content" *ngIf="!loading">
+    <!-- Lista de Pacientes na Fila -->
+    <div class="queue-list">
+      <div class="section-header">
+        <h2>📋 Pacientes na Fila</h2>
+        <span class="badge">Ordenado por Prioridade</span>
+      </div>
+
+      <div *ngIf="filaEspera.length === 0" class="empty-state">
+        <h3>✅ Fila Vazia</h3>
+        <p>Não há pacientes aguardando leito no momento</p>
+      </div>
+
+      <div class="queue-items">
+        <div
+          *ngFor="let item of filaEspera"
+          class="queue-item"
+          [class.selected]="selectedEncounter === item.encounter.id"
+          (click)="selectEncounter(item.encounter.id)"
+        >
+          <div class="position-badge">{{item.posicao}}º</div>
+
+          <div class="risk-indicator" [style.background-color]="getRiskColor(item.patient.riskColor)">
+            <span class="risk-icon">⚠️</span>
+          </div>
+
+          <div class="patient-info">
+            <h3>{{item.patient.name}}</h3>
+            <p class="patient-details">
+              <span>📄 {{item.patient.documentNumber}}</span>
+              <span class="separator">•</span>
+              <span>🎂 {{item.patient.birthDate | date:'dd/MM/yyyy'}}</span>
+            </p>
+            <p class="complaint">
+              <strong>Queixa:</strong> {{item.patient.chiefComplaint || 'Não informada'}}
+            </p>
+            <div class="tags">
+              <span class="tag risk-tag" [style.background-color]="getRiskColor(item.patient.riskColor)">
+                {{getRiskLabel(item.patient.riskColor)}}
+              </span>
+              <span class="tag time-tag">⏱️ {{item.tempoEspera}}</span>
+            </div>
+          </div>
+
+          <div class="action-indicator" *ngIf="selectedEncounter === item.encounter.id">
+            <span>✓ Selecionado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel de Alocação -->
+    <div class="allocation-panel" *ngIf="selectedEncounter">
+      <div class="panel-header">
+        <h2>🛏️ Alocar Leito</h2>
+        <button class="btn-close" (click)="selectedEncounter = null; selectedBed = ''">✕</button>
+      </div>
+
+      <div class="panel-content">
+        <div class="info-box">
+          <p><strong>Paciente Selecionado:</strong></p>
+          <p>{{ nomePacienteSelecionado }}</p>
+        </div>
+
+        <div class="form-group">
+          <label for="bed-select">Selecione o Leito:</label>
+          <select
+            id="bed-select"
+            [(ngModel)]="selectedBed"
+            class="bed-select"
+            [disabled]="leitosDisponiveis.length === 0"
+          >
+            <option value="">-- Selecione um leito --</option>
+            <option *ngFor="let leito of leitosDisponiveis" [value]="leito.id">
+              {{leito.alias}} - {{leito.name || leito.specialty || 'Sem especialidade'}}
+              <span *ngIf="leito.building"> ({{leito.building}})</span>
+            </option>
+          </select>
+        </div>
+
+        <div class="alert-info" *ngIf="leitosDisponiveis.length === 0">
+          ⚠️ Não há leitos disponíveis no momento
+        </div>
+
+        <button
+          class="btn-allocate"
+          (click)="alocarLeito()"
+          [disabled]="!selectedBed || loading"
+        >
+          <span *ngIf="!loading">✅ Confirmar Alocação</span>
+          <span *ngIf="loading">⏳ Alocando...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Leitos Disponíveis (quando não há seleção) -->
+    <div class="available-beds" *ngIf="!selectedEncounter">
+      <div class="section-header">
+        <h2>🛏️ Leitos Disponíveis</h2>
+      </div>
+
+      <div class="beds-grid">
+        <div *ngFor="let leito of leitosDisponiveis" class="bed-card">
+          <h4>{{leito.alias}}</h4>
+          <p class="bed-name">{{leito.name || 'Sem nome'}}</p>
+          <p class="bed-specialty">{{leito.specialty || 'Geral'}}</p>
+          <p class="bed-location" *ngIf="leito.building">
+            📍 {{leito.building}}
+            <span *ngIf="leito.floor"> - {{leito.floor}}</span>
+          </p>
+        </div>
+
+        <div *ngIf="leitosDisponiveis.length === 0" class="empty-state-small">
+          <p>Nenhum leito disponível</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Carregando dados...</p>
+  </div>
+</div>
