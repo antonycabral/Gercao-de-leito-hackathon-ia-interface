@@ -236,7 +236,7 @@ export class DashboardComponent implements OnInit {
     ];
 
     this.quickActions = [
-      { title: 'Novo Paciente', subtitle: 'Cadastrar e triar paciente', icon: '➕', route: '/pacientes/novo', color: 'pacientes' },
+      { title: 'Novo Paciente', subtitle: 'Cadastrar e triar paciente', icon: '➕', route: '/triagem/novo', color: 'pacientes' },
       { title: 'Ver Leitos', subtitle: 'Verificar disponibilidade', icon: '🛏️', route: '/leitos', color: 'leitos' },
       { title: 'Pacientes na Espera', subtitle: 'Aguardando internação', icon: '⏳', route: '/pacientes', color: 'pacientes' }
     ];

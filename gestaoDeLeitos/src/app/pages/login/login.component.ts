@@ -98,11 +98,11 @@ export class LoginComponent implements OnInit {
    */
   fillDemoCredentials(role: string): void {
     const demoCredentials: Record<string, { email: string; password: string }> = {
-      'ADMIN': { email: 'admin@hospital.com', password: 'admin123' },
-      'MEDICO': { email: 'medico@hospital.com', password: 'medico123' },
-      'ENFERMAGEM': { email: 'enfermagem@hospital.com', password: 'enfermagem123' },
-      'TRIAGEM': { email: 'triagem@hospital.com', password: 'triagem123' },
-      'LIMPEZA': { email: 'limpeza@hospital.com', password: 'limpeza123' }
+      'ADMIN': { email: 'admin@hospital.com', password: '123456' },
+      'MEDICO': { email: 'medico@hospital.com', password: '123456' },
+      'ENFERMAGEM': { email: 'enfermeiro@hospital.com', password: '123456' },
+      'TRIAGEM': { email: 'triagem@hospital.com', password: '123456' },
+      'LIMPEZA': { email: 'limpeza@hospital.com', password: '123456' }
     };
 
     const credentials = demoCredentials[role];

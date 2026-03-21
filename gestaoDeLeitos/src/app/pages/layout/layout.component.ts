@@ -80,4 +80,25 @@ export class LayoutComponent implements OnInit {
 
     this.pageTitle = titleMap[url] || 'Dashboard';
   }
+
+  /**
+   * Determina se um link do navbar deve ser exibido baseado na role do usuário
+   */
+  shouldShowNavItem(route: string): boolean {
+    const user = this.authService.getCurrentUser();
+    if (!user) return false;
+
+    const role = user.role;
+
+    // Configuração de acesso por rota
+    const routeAccess: Record<string, UserRole[]> = {
+      '/dashboard': [UserRole.ADMIN, UserRole.MEDICO, UserRole.ENFERMAGEM, UserRole.TRIAGEM, UserRole.LIMPEZA],
+      '/leitos': [UserRole.ADMIN, UserRole.MEDICO, UserRole.ENFERMAGEM, UserRole.TRIAGEM, UserRole.LIMPEZA],
+      '/pacientes': [UserRole.ADMIN, UserRole.MEDICO, UserRole.ENFERMAGEM, UserRole.TRIAGEM],
+      '/tarefas': [UserRole.ADMIN, UserRole.MEDICO, UserRole.ENFERMAGEM, UserRole.TRIAGEM, UserRole.LIMPEZA]
+    };
+
+    const allowedRoles = routeAccess[route];
+    return allowedRoles ? allowedRoles.includes(role) : false;
+  }
 }

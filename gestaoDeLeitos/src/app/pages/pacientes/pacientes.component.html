@@ -62,11 +62,95 @@
           <span class="label">🩺 Sinais Vitais:</span>
           <p>{{ paciente.vitalSigns }}</p>
         </div>
+
+        <!-- Status de Internação -->
+        <div class="bed-status" *ngIf="isPatientInBed(paciente.id)">
+          <span class="status-badge internado">
+            🛏️ Internado: {{ getEncounter(paciente.id)?.location?.alias || 'N/A' }}
+          </span>
+        </div>
+
+        <!-- Status aguardando leito com botão de alocação -->
+        <div class="bed-status" *ngIf="isWaitingForBed(paciente.id)">
+          <span class="status-badge aguardando">
+            ⏳ Aguardando Leito
+          </span>
+          <button
+            *ngIf="canAllocateBed()"
+            class="btn-allocate"
+            (click)="openAllocationModal(paciente)">
+            🛏️ Alocar Leito
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="empty-state" *ngIf="pacientes.length === 0">
       <p>📭 Nenhum paciente cadastrado</p>
+      <p class="hint">💡 Cadastre novos pacientes através da Triagem</p>
+    </div>
+  </div>
+
+  <!-- Modal de Alocação de Leito -->
+  <div class="modal-overlay" *ngIf="showAllocationModal" (click)="closeAllocationModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>🛏️ Alocar Paciente em Leito</h3>
+        <button class="btn-close" (click)="closeAllocationModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="patient-summary" *ngIf="selectedPatient">
+          <h4>👤 {{ selectedPatient.name }}</h4>
+          <p class="risk-info">
+            <span class="risk-badge" [class]="getRiskColorClass(selectedPatient.riskColor)">
+              {{ getRiskColorLabel(selectedPatient.riskColor) }}
+            </span>
+          </p>
+          <p class="complaint-info" *ngIf="selectedPatient.chiefComplaint">
+            💬 {{ selectedPatient.chiefComplaint }}
+          </p>
+        </div>
+
+        <div class="beds-section">
+          <h4>Leitos Disponíveis</h4>
+
+          <div class="loading" *ngIf="loadingBeds">
+            <div class="spinner-small"></div>
+            <p>Carregando leitos...</p>
+          </div>
+
+          <div class="beds-list" *ngIf="!loadingBeds && availableBeds.length > 0">
+            <div
+              class="bed-card"
+              *ngFor="let bed of availableBeds"
+              (click)="allocateToBed(bed.id)"
+              [class.disabled]="allocatingBed">
+              <div class="bed-info">
+                <h5>{{ bed.alias || bed.name }}</h5>
+                <p class="bed-type">{{ getBedTypeLabel(bed.type) }}</p>
+                <p class="bed-location" *ngIf="bed.floor || bed.wing">
+                  📍 {{ bed.wing }} - Andar {{ bed.floor }}
+                </p>
+              </div>
+              <button class="btn-select" [disabled]="allocatingBed">
+                {{ allocatingBed ? 'Alocando...' : 'Selecionar' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="empty-beds" *ngIf="!loadingBeds && availableBeds.length === 0">
+            <p>⚠️ Não há leitos disponíveis no momento</p>
+            <p class="hint">Aguarde a liberação de um leito ou verifique novamente mais tarde.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeAllocationModal()" [disabled]="allocatingBed">
+          Cancelar
+        </button>
+      </div>
     </div>
   </div>
 </div>

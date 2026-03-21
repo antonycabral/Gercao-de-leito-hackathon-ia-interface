@@ -69,6 +69,14 @@ export class LocationService {
   }
 
   /**
+   * Busca leitos disponíveis (apenas camas)
+   */
+  getAvailableBeds(specialization?: string): Observable<any[]> {
+    const params = specialization ? { specialization } : {};
+    return this.api.get<any[]>(`${this.endpoint}/available-beds`, params);
+  }
+
+  /**
    * Atualiza o status de um leito
    */
   updateStatus(id: string, status: string): Observable<any> {

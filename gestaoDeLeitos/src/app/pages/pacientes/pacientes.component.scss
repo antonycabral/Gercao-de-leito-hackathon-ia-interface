@@ -31,6 +31,42 @@
   }
 }
 
+.btn-success {
+  padding: 0.75rem 1.5rem;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #1976D2;
+    transform: translateY(-2px);
+  }
+}
+
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  background: #607D8B;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: #546E7A;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 .loading, .error {
   text-align: center;
   padding: 3rem;
@@ -196,7 +232,245 @@
     .label {
       color: #666;
       font-size: 0.875rem;
+
+
+.bed-status {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    &.internado {
+      background: #E3F2FD;
+      color: #1976D2;
+    }
+  }
+}
+
+.actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Modais */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+
+  h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn-cancel {
+  padding: 0.75rem 1.5rem;
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #e0e0e0;
+  }
+}
+
+/* Formulários */
+.form-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+
+    &.invalid {
+      border-color: #f44336;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+      }
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.patient-info-box {
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+  }
+
+  p {
+    margin: 0 0 0.5rem 0;
+    color: #666;
+    font-size: 0.875rem;
+  }
+}
+
+.section-title {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.leitos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.leito-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #4CAF50;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .leito-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+
+    .leito-alias {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.125rem;
+    }
+
+    .leito-status {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
       font-weight: 500;
+
+      &.disponivel {
+        background: #E8F5E9;
+        color: #2E7D32;
+      }
+    }
+  }
+
+  .leito-info {
+    p {
+      margin: 0.25rem 0;
+      color: #666;
+      font-size: 0.875rem;
+    }
+  }
+}     font-weight: 500;
     }
 
     .value {
@@ -232,4 +506,196 @@
   padding: 3rem;
   color: #999;
   font-size: 1.125rem;
+
+  .hint {
+    font-size: 0.875rem;
+    color: #bbb;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Estilos para alocação de leito */
+.bed-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  .status-badge {
+    &.aguardando {
+      background: #FFF3E0;
+      color: #E65100;
+    }
+  }
+}
+
+.btn-allocate {
+  padding: 0.5rem 1rem;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #1976D2;
+    transform: translateY(-1px);
+  }
+}
+
+/* Modal de alocação */
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f0f0f0;
+    color: #333;
+  }
+}
+
+.patient-summary {
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+
+  h4 {
+    margin: 0 0 0.75rem 0;
+    color: #333;
+    font-size: 1.125rem;
+  }
+
+  .risk-info {
+    margin: 0.5rem 0;
+  }
+
+  .complaint-info {
+    margin: 0.5rem 0 0 0;
+    color: #666;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}
+
+.beds-section {
+  h4 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.125rem;
+  }
+}
+
+.spinner-small {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 0.5rem;
+}
+
+.beds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.bed-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(.disabled) {
+    border-color: #4CAF50;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .bed-info {
+    flex: 1;
+
+    h5 {
+      margin: 0 0 0.25rem 0;
+      color: #333;
+      font-size: 1rem;
+    }
+
+    .bed-type {
+      margin: 0.25rem 0;
+      color: #666;
+      font-size: 0.875rem;
+    }
+
+    .bed-location {
+      margin: 0.25rem 0 0 0;
+      color: #999;
+      font-size: 0.75rem;
+    }
+  }
+
+  .btn-select {
+    padding: 0.5rem 1rem;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background: #45a049;
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.empty-beds {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+
+  p {
+    margin: 0.5rem 0;
+
+    &:first-child {
+      font-size: 1rem;
+      color: #666;
+    }
+  }
+
+  .hint {
+    font-size: 0.875rem;
+    color: #bbb;
+  }
 }
