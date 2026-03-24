@@ -1,5 +1,5 @@
 <div class="login-container">
-  <div class="login-card">
+  <mat-card class="login-card">
     <div class="login-header">
       <div class="logo-container">
         <div class="logo-icon">🏥</div>
@@ -9,72 +9,80 @@
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <div class="form-group">
-        <label for="email">E-mail</label>
+      <!-- Email Input -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>E-mail</mat-label>
         <input
-          id="email"
+          matInput
           type="email"
           formControlName="email"
           placeholder="seuemail@hospital.com"
-          [class.invalid]="isFieldInvalid('email')"
         />
-        <span class="error-message" *ngIf="isFieldInvalid('email')">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="isFieldInvalid('email')">
           E-mail é obrigatório
-        </span>
-      </div>
+        </mat-error>
+      </mat-form-field>
 
-      <div class="form-group">
-        <label for="password">Senha</label>
-        <div class="password-input">
-          <input
-            id="password"
-            [type]="showPassword ? 'text' : 'password'"
-            formControlName="password"
-            placeholder="••••••••"
-            [class.invalid]="isFieldInvalid('password')"
-          />
-          <button
-            type="button"
-            class="toggle-password"
-            (click)="togglePasswordVisibility()"
-            aria-label="Mostrar/Ocultar senha"
-          >
-            {{ showPassword ? '👁️' : '👁️‍🗨️' }}
-          </button>
-        </div>
-        <span class="error-message" *ngIf="isFieldInvalid('password')">
+      <!-- Password Input -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Senha</mat-label>
+        <input
+          matInput
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          placeholder="••••••••"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+          class="visibility-toggle"
+        >
+          <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="isFieldInvalid('password')">
           Senha é obrigatória
-        </span>
-      </div>
+        </mat-error>
+      </mat-form-field>
 
+      <!-- Remember Me & Forgot Password -->
       <div class="form-options">
-        <label class="checkbox-label">
-          <input type="checkbox" formControlName="rememberMe" />
-          <span>Lembrar-me</span>
-        </label>
+        <mat-checkbox formControlName="rememberMe">
+          Lembrar-me
+        </mat-checkbox>
         <a href="#" class="forgot-password">Esqueceu a senha?</a>
       </div>
 
+      <!-- Login Button -->
       <button
+        mat-raised-button
+        color="primary"
         type="submit"
-        class="btn-primary"
+        class="btn-login"
         [disabled]="loginForm.invalid || isLoading"
       >
-        {{ isLoading ? 'Entrando...' : 'Entrar' }}
+        <mat-icon *ngIf="isLoading" class="spinner">
+          <mat-spinner diameter="18"></mat-spinner>
+        </mat-icon>
+        <span>{{ isLoading ? 'Entrando...' : 'Entrar' }}</span>
       </button>
 
+      <!-- Demo Credentials -->
       <div class="demo-credentials" *ngIf="!isProduction">
         <p class="demo-title">Credenciais de Demonstração:</p>
         <div class="demo-roles">
-          <button type="button" (click)="fillDemoCredentials('ADMIN')">Admin</button>
-          <button type="button" (click)="fillDemoCredentials('MEDICO')">Médico</button>
-          <button type="button" (click)="fillDemoCredentials('ENFERMAGEM')">Enfermagem</button>
-          <button type="button" (click)="fillDemoCredentials('TRIAGEM')">Triagem</button>
-          <button type="button" (click)="fillDemoCredentials('LIMPEZA')">Limpeza</button>
+          <button mat-stroked-button type="button" (click)="fillDemoCredentials('ADMIN')">Admin</button>
+          <button mat-stroked-button type="button" (click)="fillDemoCredentials('MEDICO')">Médico</button>
+          <button mat-stroked-button type="button" (click)="fillDemoCredentials('ENFERMAGEM')">Enfermagem</button>
+          <button mat-stroked-button type="button" (click)="fillDemoCredentials('TRIAGEM')">Triagem</button>
+          <button mat-stroked-button type="button" (click)="fillDemoCredentials('LIMPEZA')">Limpeza</button>
         </div>
       </div>
     </form>
-  </div>
+  </mat-card>
 
   <div class="login-footer">
     <p>© 2026 Sistema de Gestão de Leitos - FHIR Compliant</p>

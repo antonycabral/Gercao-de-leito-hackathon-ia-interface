@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { UserRole } from '../../core/models/user.model';
@@ -9,11 +15,22 @@ import { WebSocketService } from '../../core/services/websocket.service';
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatListModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule
+  ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
   private authService = inject(AuthService);
   private wsService = inject(WebSocketService);
   private router = inject(Router);

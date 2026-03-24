@@ -2,18 +2,14 @@
 @import '../../../styles/variables.scss';
 
 .dashboard-container {
-  display: flex;
   height: 100vh;
   overflow: hidden;
 }
 
-.sidebar {
+mat-sidenav {
   width: 280px;
-  background: $white;
+  background: $white !important;
   border-right: 1px solid $gray-200;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -41,49 +37,50 @@
 }
 
 .sidebar-nav {
+  padding: $spacing-md 0 !important;
   flex: 1;
-  padding: $spacing-lg;
-  overflow-y: auto;
-}
 
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-md;
-  margin-bottom: $spacing-xs;
-  color: $gray-700;
-  text-decoration: none;
-  border-radius: $radius-md;
-  transition: all $transition-fast;
-  font-weight: $font-weight-medium;
+  ::ng-deep {
+    .mat-mdc-list-item {
+      color: $gray-700;
+      transition: all $transition-fast;
 
-  .nav-icon {
-    font-size: $font-size-xl;
-  }
+      &:hover {
+        background: $gray-50;
+        color: $primary-orange;
+      }
 
-  &:hover {
-    background: $gray-50;
-    color: $primary-orange;
-  }
+      &.active {
+        background: rgba($primary-orange, 0.1);
+        color: $primary-orange;
 
-  &.active {
-    background: rgba($primary-orange, 0.1);
-    color: $primary-orange;
-    font-weight: $font-weight-semibold;
+        .mdc-list-item__primary-text {
+          font-weight: $font-weight-semibold;
+        }
+      }
+
+      .mat-icon {
+        color: inherit;
+      }
+    }
   }
 }
 
 .sidebar-footer {
   padding: $spacing-lg;
   border-top: 1px solid $gray-200;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-md;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  margin-bottom: $spacing-md;
+  flex: 1;
+  min-width: 0;
 }
 
 .user-avatar {
@@ -122,41 +119,44 @@
 }
 
 .btn-logout {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-sm;
-  padding: $spacing-sm $spacing-md;
-  background: $gray-100;
-  border: none;
-  border-radius: $radius-md;
-  color: $gray-700;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: all $transition-fast;
+  margin-left: auto;
 
-  &:hover {
-    background: $gray-200;
-    color: $error;
+  ::ng-deep {
+    .mdc-icon-button {
+      color: $gray-700;
+
+      &:hover {
+        color: $error;
+        background-color: rgba($error, 0.04);
+      }
+    }
   }
 }
 
-.main-content {
-  flex: 1;
+mat-sidenav-content {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   background: $gray-50;
+  overflow: hidden;
 }
 
-.header {
-  background: $white;
-  padding: $spacing-lg $spacing-xl;
+mat-toolbar {
+  background: white !important;
+  color: $gray-900 !important;
+  padding: 0 $spacing-xl !important;
   border-bottom: 1px solid $gray-200;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  box-shadow: $shadow-sm;
+
+  ::ng-deep {
+    .mat-toolbar {
+      background: white !important;
+    }
+
+    .mdc-theme--primary {
+      background-color: white !important;
+      color: $gray-900 !important;
+    }
+  }
 }
 
 .page-title {
@@ -166,25 +166,24 @@
   color: $gray-900;
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
+.spacer {
+  flex: 1 1 auto;
 }
 
 .connection-status {
   display: flex;
   align-items: center;
   gap: $spacing-xs;
-  padding: $spacing-xs $spacing-sm;
+  padding: $spacing-xs $spacing-md;
   border-radius: $radius-full;
   background: $gray-100;
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
+  color: $gray-700;
 
   &.connected {
     .status-dot {
-      background: $success;
+      color: $success;
     }
     .status-text {
       color: $success;
@@ -192,14 +191,6 @@
   }
 
   .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: $radius-full;
-    background: $error;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .status-text {
     color: $error;
   }
 }
@@ -210,32 +201,16 @@
   padding: $spacing-xl;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@media (max-width: $breakpoint-lg) {
-  .sidebar {
+@media (max-width: $breakpoint-md) {
+  mat-sidenav {
     width: 240px;
   }
-}
 
-@media (max-width: $breakpoint-md) {
-  .sidebar {
-    position: fixed;
-    left: -280px;
-    top: 0;
-    bottom: 0;
-    z-index: $z-fixed;
-    transition: left $transition-base;
+  .page-title {
+    font-size: $font-size-xl;
+  }
 
-    &.open {
-      left: 0;
-    }
+  .content {
+    padding: $spacing-md;
   }
 }

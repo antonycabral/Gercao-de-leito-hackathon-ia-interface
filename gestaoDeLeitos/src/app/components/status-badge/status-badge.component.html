@@ -1,5 +1,6 @@
-<div
+<mat-chip
   class="status-badge"
-  [class]="'status-' + status.toLowerCase()">
-  {{ getStatusLabel(status) }}
-</div>
+  [class]="'status-badge status-' + (status || '').toLowerCase()">
+  <mat-icon>{{ getStatusIcon(status) }}</mat-icon>
+  <span>{{ getStatusLabel(status) }}</span>
+</mat-chip>

@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
@@ -29,7 +34,14 @@ interface QuickAction {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -322,5 +334,28 @@ export class DashboardComponent implements OnInit {
       return parseInt(ocupacaoCard.value.replace('%', '')) || 0;
     }
     return 0;
+  }
+
+  getMaterialIcon(icon: string): string {
+    const iconMap: Record<string, string> = {
+      '🛏️': 'bed',
+      '🟢': 'check_circle',
+      '🔴': 'cancel',
+      '📊': 'bar_chart',
+      '👤': 'person',
+      '✓': 'task_alt',
+      '👥': 'group',
+      '💊': 'medication',
+      '🔬': 'science',
+      '💉': 'vaccines',
+      '📋': 'assignment',
+      '➕': 'add_circle',
+      '⏳': 'hourglass_top',
+      '🧹': 'cleaning_services',
+      '🔧': 'build',
+      '⚠️': 'warning'
+    };
+
+    return iconMap[icon] || 'dashboard';
   }
 }

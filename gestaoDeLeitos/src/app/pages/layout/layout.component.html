@@ -1,5 +1,7 @@
-<div class="dashboard-container">
-  <aside class="sidebar">
+<mat-sidenav-container class="dashboard-container">
+  <!-- Sidebar Navigation -->
+  <mat-sidenav #sidenav class="sidebar" mode="side" opened="true">
+    <!-- Logo -->
     <div class="sidebar-header">
       <div class="logo">
         <span class="logo-icon">🏥</span>
@@ -7,25 +9,27 @@
       </div>
     </div>
 
-    <nav class="sidebar-nav">
-      <a *ngIf="shouldShowNavItem('/dashboard')" routerLink="/dashboard" routerLinkActive="active" class="nav-item">
-        <span class="nav-icon">📊</span>
-        <span class="nav-text">Dashboard</span>
-      </a>
-      <a *ngIf="shouldShowNavItem('/leitos')" routerLink="/leitos" routerLinkActive="active" class="nav-item">
-        <span class="nav-icon">🛏️</span>
-        <span class="nav-text">Leitos</span>
-      </a>
-      <a *ngIf="shouldShowNavItem('/pacientes')" routerLink="/pacientes" routerLinkActive="active" class="nav-item">
-        <span class="nav-icon">👤</span>
-        <span class="nav-text">Pacientes</span>
-      </a>
-      <a *ngIf="shouldShowNavItem('/tarefas')" routerLink="/tarefas" routerLinkActive="active" class="nav-item">
-        <span class="nav-icon">✓</span>
-        <span class="nav-text">Tarefas</span>
-      </a>
-    </nav>
+    <!-- Navigation Items -->
+    <mat-nav-list class="sidebar-nav">
+      <mat-list-item *ngIf="shouldShowNavItem('/dashboard')" routerLink="/dashboard" routerLinkActive="active">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </mat-list-item>
+      <mat-list-item *ngIf="shouldShowNavItem('/leitos')" routerLink="/leitos" routerLinkActive="active">
+        <mat-icon matListItemIcon>hotel</mat-icon>
+        <span matListItemTitle>Leitos</span>
+      </mat-list-item>
+      <mat-list-item *ngIf="shouldShowNavItem('/pacientes')" routerLink="/pacientes" routerLinkActive="active">
+        <mat-icon matListItemIcon>person</mat-icon>
+        <span matListItemTitle>Pacientes</span>
+      </mat-list-item>
+      <mat-list-item *ngIf="shouldShowNavItem('/tarefas')" routerLink="/tarefas" routerLinkActive="active">
+        <mat-icon matListItemIcon>task_alt</mat-icon>
+        <span matListItemTitle>Tarefas</span>
+      </mat-list-item>
+    </mat-nav-list>
 
+    <!-- User Info & Logout -->
     <div class="sidebar-footer">
       <div class="user-info">
         <div class="user-avatar">{{ getUserInitials() }}</div>
@@ -34,28 +38,39 @@
           <p class="user-role">{{ getRoleLabel((currentUser$ | async)?.role) }}</p>
         </div>
       </div>
-      <button class="btn-logout" (click)="logout()">
-        <span>🚪</span>
-        Sair
+      <button
+        mat-icon-button
+        class="btn-logout"
+        (click)="logout()"
+        matTooltip="Fazer logout"
+        matTooltipPosition="above"
+      >
+        <mat-icon>logout</mat-icon>
       </button>
     </div>
-  </aside>
+  </mat-sidenav>
 
-  <main class="main-content">
-    <header class="header">
+  <!-- Main Content -->
+  <mat-sidenav-content>
+    <!-- Header/Toolbar -->
+    <mat-toolbar color="primary" class="header">
       <h1 class="page-title">{{ pageTitle }}</h1>
-      <div class="header-actions">
-        <div class="connection-status" [class.connected]="isConnected$ | async">
-          <span class="status-dot"></span>
-          <span class="status-text">
-            {{ (isConnected$ | async) ? 'Conectado' : 'Desconectado' }}
-          </span>
-        </div>
+      <span class="spacer"></span>
+      <div
+        class="connection-status"
+        [class.connected]="(isConnected$ | async)"
+        matTooltip="Status da conexão WebSocket"
+      >
+        <mat-icon class="status-dot">{{ (isConnected$ | async) ? 'cloud_done' : 'cloud_off' }}</mat-icon>
+        <span class="status-text">
+          {{ (isConnected$ | async) ? 'Conectado' : 'Desconectado' }}
+        </span>
       </div>
-    </header>
+    </mat-toolbar>
 
+    <!-- Page Content -->
     <div class="content">
       <router-outlet></router-outlet>
     </div>
-  </main>
-</div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

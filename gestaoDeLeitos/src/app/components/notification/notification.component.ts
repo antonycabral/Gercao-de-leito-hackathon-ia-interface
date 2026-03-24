@@ -1,12 +1,15 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { Notification, NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-notification',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.scss'],
   animations: [

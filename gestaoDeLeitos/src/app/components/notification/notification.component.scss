@@ -25,6 +25,11 @@
   box-shadow: $shadow-lg;
   border-left: 4px solid;
 
+  ::ng-deep .mat-mdc-card-content,
+  ::ng-deep .mat-mdc-card-actions {
+    padding: 0;
+  }
+
   &.success {
     border-left-color: $success;
 
@@ -59,9 +64,13 @@
 }
 
 .notification-icon {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
   flex-shrink: 0;
+
+  mat-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+  }
 }
 
 .notification-content {
@@ -85,32 +94,16 @@
 
 .notification-action {
   margin-top: $spacing-sm;
-  padding: $spacing-xs $spacing-sm;
-  background: transparent;
-  border: 1px solid $primary-orange;
-  border-radius: $radius-sm;
-  color: $primary-orange;
   font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: all $transition-fast;
 
-  &:hover {
-    background: $primary-orange;
-    color: $white;
+  &.mdc-button {
+    --mdc-outlined-button-outline-color: #{$primary-orange};
+    --mdc-outlined-button-label-text-color: #{$primary-orange};
   }
 }
 
 .notification-close {
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  background: transparent;
-  border: none;
   color: $gray-500;
-  font-size: $font-size-lg;
-  cursor: pointer;
-  transition: color $transition-fast;
   flex-shrink: 0;
 
   &:hover {

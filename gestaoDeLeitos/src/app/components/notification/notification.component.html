@@ -1,5 +1,5 @@
 <div class="notifications-container">
-  <div
+  <mat-card
     *ngFor="let notification of notifications$ | async"
     class="notification"
     [class.success]="notification.type === 'success'"
@@ -9,10 +9,10 @@
     [@slideIn]>
 
     <div class="notification-icon">
-      <span *ngIf="notification.type === 'success'">✓</span>
-      <span *ngIf="notification.type === 'error'">✕</span>
-      <span *ngIf="notification.type === 'warning'">⚠</span>
-      <span *ngIf="notification.type === 'info'">ℹ</span>
+      <mat-icon *ngIf="notification.type === 'success'">check_circle</mat-icon>
+      <mat-icon *ngIf="notification.type === 'error'">error</mat-icon>
+      <mat-icon *ngIf="notification.type === 'warning'">warning</mat-icon>
+      <mat-icon *ngIf="notification.type === 'info'">info</mat-icon>
     </div>
 
     <div class="notification-content">
@@ -21,6 +21,7 @@
 
       <button
         *ngIf="notification.action"
+        mat-stroked-button
         class="notification-action"
         (click)="onAction(notification)">
         {{ notification.action.label }}
@@ -29,10 +30,11 @@
 
     <button
       *ngIf="notification.dismissible"
+      mat-icon-button
       class="notification-close"
       (click)="dismiss(notification.id)"
       aria-label="Fechar">
-      ✕
+      <mat-icon>close</mat-icon>
     </button>
-  </div>
+  </mat-card>
 </div>

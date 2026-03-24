@@ -1,15 +1,46 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-status-badge',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatChipsModule, MatIconModule],
   templateUrl: './status-badge.component.html',
   styleUrls: ['./status-badge.component.scss']
 })
 export class StatusBadgeComponent {
   @Input() status!: string;
+
+  getStatusIcon(status: string): string {
+    const icons: Record<string, string> = {
+      DISPONIVEL: 'check_circle',
+      OCUPADO: 'cancel',
+      OCUPADO_AUSENTE: 'person_off',
+      EM_MEDICACAO: 'medication',
+      HIGIENIZACAO: 'cleaning_services',
+      RESERVADO: 'bookmark',
+      MANUTENCAO: 'build',
+      INATIVO: 'block',
+      EMERGENCIA: 'emergency',
+      MUITO_URGENTE: 'priority_high',
+      URGENTE: 'warning',
+      POUCO_URGENTE: 'schedule',
+      NAO_URGENTE: 'info',
+      REQUESTED: 'assignment_late',
+      PENDENTE: 'pending',
+      IN_PROGRESS: 'hourglass_top',
+      EM_ANDAMENTO: 'hourglass_top',
+      COMPLETED: 'task_alt',
+      CONCLUIDA: 'task_alt',
+      CANCELLED: 'cancel',
+      CANCELADA: 'cancel',
+      FAILED: 'error'
+    };
+
+    return icons[status] || 'label';
+  }
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {

@@ -1,0 +1,121 @@
+@use '@angular/material' as mat;
+@use './colors.scss' as colors;
+
+@include mat.core();
+
+$orange-palette: (
+  50: colors.$primary-orange-lightest,
+  100: colors.$primary-orange-lightest,
+  200: colors.$primary-orange-lighter,
+  300: colors.$primary-orange-light,
+  400: #ff6922,
+  500: colors.$primary-orange,
+  600: #e74f00,
+  700: colors.$primary-orange-dark,
+  800: #b43d00,
+  900: colors.$primary-orange-darker,
+  A100: colors.$primary-orange-light,
+  A200: colors.$primary-orange,
+  A400: colors.$primary-orange-dark,
+  A700: colors.$primary-orange-darker,
+  contrast: (
+    50: colors.$gray-900,
+    100: colors.$gray-900,
+    200: colors.$gray-900,
+    300: colors.$gray-900,
+    400: colors.$white,
+    500: colors.$white,
+    600: colors.$white,
+    700: colors.$white,
+    800: colors.$white,
+    900: colors.$white,
+    A100: colors.$gray-900,
+    A200: colors.$white,
+    A400: colors.$white,
+    A700: colors.$white,
+  )
+);
+
+$yellow-palette: (
+  50: #fff7e6,
+  100: #ffebbf,
+  200: #ffde94,
+  300: #ffd166,
+  400: colors.$secondary-yellow-light,
+  500: colors.$secondary-yellow,
+  600: #e6a600,
+  700: colors.$secondary-yellow-dark,
+  800: #997000,
+  900: #664a00,
+  A100: #fff4cc,
+  A200: colors.$secondary-yellow-light,
+  A400: colors.$secondary-yellow,
+  A700: colors.$secondary-yellow-dark,
+  contrast: (
+    50: colors.$gray-900,
+    100: colors.$gray-900,
+    200: colors.$gray-900,
+    300: colors.$gray-900,
+    400: colors.$gray-900,
+    500: colors.$gray-900,
+    600: colors.$gray-900,
+    700: colors.$white,
+    800: colors.$white,
+    900: colors.$white,
+    A100: colors.$gray-900,
+    A200: colors.$gray-900,
+    A400: colors.$gray-900,
+    A700: colors.$white,
+  )
+);
+
+$warn-palette: (
+  50: #ffe6e6,
+  100: #fcbfbf,
+  200: #f79494,
+  300: #f26a6a,
+  400: #ef4b4b,
+  500: colors.$error,
+  600: #d83d3d,
+  700: #c13232,
+  800: #aa2727,
+  900: #8a1a1a,
+  A100: #ffcccc,
+  A200: #ff9999,
+  A400: #ff6666,
+  A700: #ff5252,
+  contrast: (
+    50: colors.$gray-900,
+    100: colors.$gray-900,
+    200: colors.$gray-900,
+    300: colors.$white,
+    400: colors.$white,
+    500: colors.$white,
+    600: colors.$white,
+    700: colors.$white,
+    800: colors.$white,
+    900: colors.$white,
+    A100: colors.$gray-900,
+    A200: colors.$gray-900,
+    A400: colors.$white,
+    A700: colors.$white,
+  )
+);
+
+$app-primary: mat.define-palette($orange-palette, 500, 300, 700);
+$app-accent: mat.define-palette($yellow-palette, 500, 300, 700);
+$app-warn: mat.define-palette($warn-palette, 500);
+
+$app-theme: mat.define-light-theme((
+  color: (
+    primary: $app-primary,
+    accent: $app-accent,
+    warn: $app-warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+  ),
+  density: 0,
+));
+
+@include mat.all-component-themes($app-theme);

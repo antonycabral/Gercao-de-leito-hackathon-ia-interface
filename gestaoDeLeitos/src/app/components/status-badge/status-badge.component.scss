@@ -4,12 +4,33 @@
 .status-badge {
   display: inline-flex;
   align-items: center;
+  gap: $spacing-xs;
   padding: $spacing-xs $spacing-sm;
   border-radius: $radius-full;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+
+  ::ng-deep .mdc-evolution-chip__text-label {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+  }
+
+  ::ng-deep .mat-mdc-chip-action-label {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  mat-icon {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+  }
 
   // Location Status Colors
   &.status-disponivel {

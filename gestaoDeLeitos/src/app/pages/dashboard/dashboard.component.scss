@@ -1,480 +1,247 @@
+@import '../../../styles/colors.scss';
+@import '../../../styles/variables.scss';
+
 .dashboard-container {
-  padding: 2rem;
+  padding: $spacing-xl;
   max-width: 1400px;
   margin: 0 auto;
 }
 
 .welcome-section {
-  margin-bottom: 2rem;
+  margin-bottom: $spacing-xl;
 
   h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 2rem;
-    color: #333;
-  }
-
-  p {
-    margin: 0;
-    color: #666;
-    font-size: 1rem;
+    margin: 0 0 $spacing-sm 0;
+    font-size: $font-size-3xl;
+    color: $gray-900;
   }
 
   .user-role {
     display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-top: 0.5rem;
+    margin-top: $spacing-xs;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $radius-full;
+    color: $white;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    background: $gradient-primary;
   }
 }
 
-.loading, .error {
+.loading {
   text-align: center;
-  padding: 3rem;
+  padding: $spacing-2xl;
 
-  .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #4CAF50;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
+  ::ng-deep .mat-mdc-progress-spinner {
+    --mdc-circular-progress-active-indicator-color: #{$primary-orange};
   }
 
   p {
-    color: #666;
-    font-size: 1.125rem;
+    margin-top: $spacing-md;
+    color: $gray-600;
+    font-size: $font-size-lg;
   }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 .error {
-  color: #d32f2f;
-
-  button {
-    margin-top: 1rem;
-    padding: 0.75rem 1.5rem;
-    background: #d32f2f;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-
-    &:hover {
-      background: #c62828;
-    }
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  text-align: center;
+  padding: $spacing-xl;
+  color: $error;
 }
 
 .dashboard-content {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: $spacing-xl;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: $spacing-lg;
 }
 
 .stat-card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
+  gap: $spacing-lg;
   border: 2px solid transparent;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  }
+  transition: transform $transition-base, box-shadow $transition-base;
 
   .stat-icon {
-    font-size: 3rem;
-    width: 80px;
-    height: 80px;
+    width: 72px;
+    height: 72px;
+    border-radius: $radius-lg;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f5f5f5;
-    border-radius: 12px;
     flex-shrink: 0;
+
+    mat-icon {
+      color: $white;
+      width: 36px;
+      height: 36px;
+      font-size: 36px;
+    }
   }
 
   .stat-content {
     flex: 1;
 
     h3 {
-      margin: 0 0 0.5rem 0;
-      font-size: 0.875rem;
-      color: #666;
-      font-weight: 500;
+      margin: 0 0 $spacing-xs 0;
+      font-size: $font-size-sm;
+      color: $gray-600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .stat-number {
-      margin: 0 0 0.5rem 0;
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #333;
+      margin: 0 0 $spacing-xs 0;
+      font-size: $font-size-4xl;
+      color: $gray-900;
+      font-weight: $font-weight-bold;
       line-height: 1;
     }
 
     .stat-label {
-      font-size: 0.75rem;
-      color: #999;
-      font-style: italic;
-    }
-  }
-
-  &.total {
-    border-color: #2196F3;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-      color: white;
-    }
-  }
-
-  &.available {
-    border-color: #4CAF50;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
-      color: white;
-    }
-  }
-
-  &.occupied {
-    border-color: #f44336;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
-      color: white;
-    }
-  }
-
-  &.occupancy {
-    border-color: #FF9800;
-    cursor: default;
-
-    &:hover {
-      transform: none;
-    }
-
-    .stat-icon {
-      background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-      color: white;
+      color: $gray-500;
+      font-size: $font-size-xs;
     }
 
     .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: #f0f0f0;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 0.5rem;
-
-      .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #FF9800 0%, #F57C00 100%);
-        transition: width 0.5s ease;
-      }
-    }
-  }
-
-  &.patients {
-    border-color: #9C27B0;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
-      color: white;
-    }
-  }
-
-  &.tasks {
-    border-color: #00BCD4;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
-      color: white;
-    }
-  }
-
-  &.cleaning {
-    border-color: #03A9F4;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #03A9F4 0%, #0288D1 100%);
-      color: white;
-    }
-  }
-
-  &.maintenance {
-    border-color: #FF9800;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-      color: white;
-    }
-  }
-
-  &.medicacoes {
-    border-color: #E91E63;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
-      color: white;
-    }
-  }
-
-  &.exames {
-    border-color: #673AB7;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #673AB7 0%, #512DA8 100%);
-      color: white;
-    }
-  }
-
-  &.alert {
-    border-color: #FF5722;
-
-    .stat-icon {
-      background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);
-      color: white;
+      margin-top: $spacing-sm;
     }
   }
 
   &.clickable {
     cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-lg;
+    }
   }
 
   &:not(.clickable) {
     cursor: default;
+  }
+}
+
+$card-colors: (
+  total: #2196f3,
+  available: $success,
+  occupied: $error,
+  occupancy: $secondary-yellow,
+  patients: #9c27b0,
+  tasks: #00bcd4,
+  cleaning: #03a9f4,
+  maintenance: #ff9800,
+  medicacoes: #e91e63,
+  exames: #673ab7,
+  alert: #ff5722
+);
+
+@each $name, $color in $card-colors {
+  .stat-card.#{$name} {
+    border-color: $color;
+
+    .stat-icon {
+      background: linear-gradient(135deg, lighten($color, 4%) 0%, darken($color, 8%) 100%);
+    }
+  }
+
+  .action-btn.#{$name} {
+    border-color: rgba($color, 0.35);
+
+    .action-icon {
+      background: linear-gradient(135deg, lighten($color, 4%) 0%, darken($color, 8%) 100%);
+      color: $white;
+    }
 
     &:hover {
-      transform: none;
+      background: rgba($color, 0.08);
+      border-color: rgba($color, 0.55);
     }
   }
 }
 
 .quick-actions {
-  margin-top: 1rem;
-
   h2 {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.5rem;
-    color: #333;
+    margin: 0 0 $spacing-lg 0;
+    font-size: $font-size-2xl;
+    color: $gray-900;
   }
 
   .actions-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
+    gap: $spacing-md;
   }
+}
 
-  .action-btn {
+.action-btn {
+  height: auto;
+  min-height: 88px;
+  justify-content: flex-start;
+  gap: $spacing-lg;
+  border-width: 2px;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+
+  .action-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: $radius-md;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: left;
+    justify-content: center;
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    mat-icon {
+      width: 28px;
+      height: 28px;
+      font-size: 28px;
+    }
+  }
+
+  .action-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+
+    strong {
+      font-size: $font-size-base;
+      color: $gray-900;
     }
 
-    .action-icon {
-      font-size: 2.5rem;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      flex-shrink: 0;
-    }
-
-    .action-text {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-
-      strong {
-        font-size: 1.125rem;
-        color: #333;
-      }
-
-      small {
-        font-size: 0.875rem;
-        color: #666;
-      }
-    }
-
-    &.leitos {
-      border-color: #2196F3;
-
-      &:hover {
-        border-color: #1976D2;
-        background: #E3F2FD;
-      }
-
-      .action-icon {
-        background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-        color: white;
-      }
-    }
-
-    &.pacientes {
-      border-color: #9C27B0;
-
-      &:hover {
-        border-color: #7B1FA2;
-        background: #F3E5F5;
-      }
-
-      .action-icon {
-        background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
-        color: white;
-      }
-    }
-
-    &.tarefas {
-      border-color: #00BCD4;
-
-      &:hover {
-        border-color: #0097A7;
-        background: #E0F7FA;
-      }
-
-      .action-icon {
-        background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
-        color: white;
-      }
-    }
-
-    &.usuarios {
-      border-color: #FF9800;
-
-      &:hover {
-        border-color: #F57C00;
-        background: #FFF3E0;
-      }
-
-      .action-icon {
-        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-        color: white;
-      }
-    }
-
-    &.relatorios {
-      border-color: #607D8B;
-
-      &:hover {
-        border-color: #455A64;
-        background: #ECEFF1;
-      }
-
-      .action-icon {
-        background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
-        color: white;
-      }
-    }
-
-    &.medicacoes {
-      border-color: #E91E63;
-
-      &:hover {
-        border-color: #C2185B;
-        background: #FCE4EC;
-      }
-
-      .action-icon {
-        background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
-        color: white;
-      }
-    }
-
-    &.exames {
-      border-color: #673AB7;
-
-      &:hover {
-        border-color: #512DA8;
-        background: #EDE7F6;
-      }
-
-      .action-icon {
-        background: linear-gradient(135deg, #673AB7 0%, #512DA8 100%);
-        color: white;
-      }
-    }
-
-    &.alert {
-      border-color: #FF5722;
-
-      &:hover {
-        border-color: #E64A19;
-        background: #FBE9E7;
-      }
-
-      .action-icon {
-        background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);
-        color: white;
-      }
+    small {
+      margin-top: $spacing-xs;
+      color: $gray-600;
+      font-size: $font-size-sm;
     }
   }
 }
 
-// Responsividade
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-md) {
   .dashboard-container {
-    padding: 1rem;
+    padding: $spacing-md;
   }
 
-  .welcome-section {
-    h1 {
-      font-size: 1.5rem;
-    }
+  .welcome-section h1 {
+    font-size: $font-size-2xl;
   }
 
-  .stats-grid {
+  .stats-grid,
+  .quick-actions .actions-grid {
     grid-template-columns: 1fr;
   }
 
-  .stat-card {
-    .stat-content {
-      .stat-number {
-        font-size: 2rem;
-      }
-    }
-  }
-
-  .quick-actions {
-    .actions-grid {
-      grid-template-columns: 1fr;
-    }
+  .stat-card .stat-content .stat-number {
+    font-size: $font-size-3xl;
   }
 }
